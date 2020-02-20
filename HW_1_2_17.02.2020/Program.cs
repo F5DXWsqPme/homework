@@ -9,16 +9,16 @@
 
         private static int Fibonacci(int num)
         {
-            int fib0 = 0, fib1 = 1, newFib;
+            int currentFibonacciNumber = 0, nextFibonacciNumber = 1, newFibonacciNumber;
 
-            for (int i = 0; i < num; i++)
+            for (int i = 0; i < number; i++)
             {
-                newFib = fib0 + fib1;
-                fib0 = fib1;
-                fib1 = newFib;
+                newFibonacciNumber = currentFibonacciNumber + nextFibonacciNumber;
+                currentFibonacciNumber = nextFibonacciNumber;
+                nextFibonacciNumber = newFibonacciNumber;
             }
 
-            return fib0;
+            return currentFibonacciNumber;
         }
     }
 }
