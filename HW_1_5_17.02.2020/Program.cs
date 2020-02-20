@@ -1,22 +1,22 @@
-﻿namespace HW_1_5
+namespace HW_1_5
 {
     class Program
     {
         public static void Main(string[] args)
         {
-            int[,] matr = new int[3, 4] { { 4, 3, 2, 1 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
-            PrintMatrix(matr);
-            SortMatrix(matr);
-            PrintMatrix(matr);
+            int[,] matrix = new int[3, 4] { { 4, 3, 2, 1 }, { 5, 6, 7, 8 }, { 9, 10, 11, 12 } };
+            PrintMatrix(matrix);
+            SortMatrix(matrix);
+            PrintMatrix(matrix);
         }
 
-        private static void PrintMatrix(int[,] matr)
+        private static void PrintMatrix(int[,] matrix)
         {
-            for (int i = 0; i < matr.GetLength(0); i++)
+            for (int i = 0; i < matrix.GetLength(0); i++)
             {
-                for (int j = 0; j < matr.GetLength(1); j++)
+                for (int j = 0; j < matrix.GetLength(1); j++)
                 {
-                    System.Console.Write($"{matr[i, j]} ");
+                    System.Console.Write($"{matrix[i, j]} ");
                 }
 
                 System.Console.Write("\n");
@@ -25,42 +25,42 @@
             System.Console.Write("\n");
         }
 
-        private static void SwapCols(int[,] matr, int ind1, int ind2)
+        private static void SwapCols(int[,] matrix, int index1, int index2)
         {
-            int size = matr.GetLength(0);
-            int[] tmp = new int[size];
+            int size = matrix.GetLength(0);
+            int[] temporary = new int[size];
 
             for (int i = 0; i < size; i++)
             {
-                tmp[i] = matr[i, ind1];
+                temporary[i] = matrix[i, index1];
             }
 
             for (int i = 0; i < size; i++)
             {
-                matr[i, ind1] = matr[i, ind2];
+                matrix[i, index1] = matrix[i, index2];
             }
 
             for (int i = 0; i < size; i++)
             {
-                matr[i, ind2] = tmp[i];
+                matrix[i, index2] = temporary[i];
             }
         }
 
-        private static void SortMatrix(int[,] matr)
+        private static void SortMatrix(int[,] matrix)
         {
-            int size = matr.GetLength(1);
+            int size = matrix.GetLength(1);
             for (int j = 0; j < size - 1; j++)
             {
-                int min = j;
+                int minimum = j;
                 for (int i = j + 1; i < size; i++)
                 {
-                    if (matr[0, i] < matr[0, min])
+                    if (matrix[0, i] < matrix[0, minimum])
                     {
-                        min = i;
+                        minimum = i;
                     }
                 }
 
-                SwapCols(matr, j, min);
+                SwapCols(matrix, j, minimum);
             }
         }
     }
