@@ -1,4 +1,4 @@
-﻿namespace SomeNamespace
+namespace SomeNamespace
 {
     class Program
     {
@@ -24,27 +24,27 @@
             System.Console.Write("\n");
         }
 
-        private static void Swap(ref int a, ref int b)
+        private static void Swap(ref int firstElement, ref int secondElement)
         {
-            int tmp = a;
-            a = b;
-            b = tmp;
+            int temporary = firstElement;
+            firstElement = secondElement;
+            secondElement = temporary;
         }
 
         private static void SelectionSort(int[] array)
         {
             for (int j = 0; j < array.Length - 1; j++)
             {
-                int min = j;
+                int minimum = j;
                 for (int i = j + 1; i < array.Length; i++)
                 {
-                    if (array[i] < array[min])
+                    if (array[i] < array[minimum])
                     {
-                        min = i;
+                        minimum = i;
                     }
                 }
 
-                Swap(ref array[j], ref array[min]);
+                Swap(ref array[j], ref array[minimum]);
             }
         }
     }
