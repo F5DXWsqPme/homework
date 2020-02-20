@@ -7,7 +7,7 @@
             System.Console.WriteLine($"Fibonacci(10) = {Fibonacci(10)}");
         }
 
-        private static int Fibonacci(int num)
+        private static int Fibonacci(int number)
         {
             int currentFibonacciNumber = 0, nextFibonacciNumber = 1, newFibonacciNumber;
 
