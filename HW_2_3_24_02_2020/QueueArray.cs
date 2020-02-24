@@ -1,6 +1,6 @@
 ﻿namespace HW_2_3_24_02_2020
 {
-    internal class QueueArray
+    internal class QueueArray : IQueue
     {
         private IToken[] array;
         private int begin;
@@ -29,6 +29,11 @@
             this.begin = (this.begin + 1) % this.maximalSize;
 
             return result;
+        }
+
+        public bool IsEmpty()
+        {
+            return this.begin == this.end;
         }
     }
 }

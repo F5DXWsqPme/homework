@@ -5,5 +5,7 @@
         public abstract IToken Get();
 
         public abstract void Put(IToken token);
+
+        public abstract bool IsEmpty();
     }
 }
