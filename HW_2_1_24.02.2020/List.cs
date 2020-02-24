@@ -1,6 +1,6 @@
 ﻿namespace HW_2_1_24_02_2020
 {
-    class List
+    internal class List
     {
         private ListElement firstElement;
         private int size;
@@ -120,7 +120,7 @@
                 System.Console.WriteLine("<Empty list>");
                 return;
             }
-            
+
             ListElement current = this.firstElement;
 
             while (current != null)

@@ -1,6 +1,6 @@
 ﻿namespace HW_2_1_24_02_2020
 {
-    public class Program
+    internal class Program
     {
         public static void Main(string[] args)
         {
@@ -10,6 +10,7 @@
             {
                 list.Print();
                 list.AddElement(9, 0);
+                System.Console.WriteLine($"List[0] = {list.GetElement(0)}");
                 list.Print();
                 list.AddElement(8, 0);
                 list.Print();
