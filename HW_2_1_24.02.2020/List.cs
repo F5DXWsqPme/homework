@@ -79,7 +79,7 @@
 
         public void SetElement(int value, int position)
         {
-            if (position > this.size || position < 0)
+            if (position >= this.size || position < 0)
             {
                 return;
             }
@@ -92,6 +92,23 @@
             }
 
             current.SetValue(value);
+        }
+
+        public int GetElement(int position)
+        {
+            if (position >= this.size || position < 0)
+            {
+                return 0;
+            }
+
+            ListElement current = this.firstElement;
+
+            for (int i = 0; i < position; i++)
+            {
+                current = current.GetNext();
+            }
+
+            return current.GetValue();
         }
 
         public void Print()
