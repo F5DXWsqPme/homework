@@ -96,8 +96,6 @@
 
         public void Print()
         {
-            ListElement current = this.firstElement;
-
             System.Console.Write($"List (size = {this.GetSize()}): ");
 
             if (this.IsEmpty())
@@ -105,6 +103,8 @@
                 System.Console.WriteLine("<Empty list>");
                 return;
             }
+            
+            ListElement current = this.firstElement;
 
             while (current != null)
             {
