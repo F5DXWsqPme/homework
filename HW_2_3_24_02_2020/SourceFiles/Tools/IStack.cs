@@ -7,5 +7,7 @@
         public abstract void Push(IToken token);
 
         public abstract void Clear();
+
+        public abstract bool IsEmpty();
     }
 }

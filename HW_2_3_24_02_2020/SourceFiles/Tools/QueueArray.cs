@@ -40,9 +40,7 @@
         }
 
         public bool IsEmpty()
-        {
-            return this.begin == this.end;
-        }
+            => this.begin == this.end;
 
         private void ResizeArray(int newSize)
         {

@@ -11,21 +11,11 @@
             this.firstElement = null;
         }
 
-        ~List()
-        {
-            this.firstElement = null;
-            this.size = 0;
-        }
-
         public int GetSize()
-        {
-            return this.size;
-        }
+            => this.size;
 
         public bool IsEmpty()
-        {
-            return this.GetSize() == 0;
-        }
+            => this.GetSize() == 0;
 
         public void AddElement(IToken value, int position)
         {
@@ -123,14 +113,10 @@
             }
 
             public IToken GetValue()
-            {
-                return this.value;
-            }
+                => this.value;
 
             public ListElement GetNext()
-            {
-                return this.next;
-            }
+                => this.next;
 
             public void SetValue(IToken value)
             {

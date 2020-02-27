@@ -45,6 +45,9 @@
             return result;
         }
 
+        public bool IsEmpty()
+            => this.size == 0;
+
         private void ResizeArray(int newSize)
         {
             IToken[] newArray = new IToken[newSize];

@@ -3,17 +3,10 @@
     internal class Operator : IToken
     {
         private readonly char sign;
-        private readonly int priority;
 
         public Operator(char sign)
         {
             this.sign = sign;
-            this.priority = this.EvaluatePriority();
-        }
-
-        public int GetPriority()
-        {
-            return this.priority;
         }
 
         public Number Evaluate(Number left, Number right)
@@ -31,23 +24,6 @@
             }
 
             return new Number(int.MinValue);
-        }
-
-        private int EvaluatePriority()
-        {
-            switch (this.sign)
-            {
-                case '+':
-                    return 400;
-                case '-':
-                    return 400;
-                case '*':
-                    return 600;
-                case '/':
-                    return 600;
-                default:
-                    throw new System.Exception($"Wrong operator '{this.sign}'");
-            }
         }
     }
 }

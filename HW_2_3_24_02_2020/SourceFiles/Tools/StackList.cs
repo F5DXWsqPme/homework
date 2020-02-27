@@ -35,5 +35,8 @@
 
             return result;
         }
+
+        public bool IsEmpty()
+            => this.list.IsEmpty();
     }
 }
