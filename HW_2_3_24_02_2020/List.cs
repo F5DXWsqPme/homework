@@ -31,7 +31,7 @@
         {
             if (position > this.size || position < 0)
             {
-                return;
+                throw new System.Exception("Wrong position");
             }
 
             this.size++;
@@ -56,7 +56,7 @@
         {
             if (position >= this.size || position < 0)
             {
-                return;
+                throw new System.Exception("Wrong position");
             }
 
             this.size--;
@@ -81,7 +81,7 @@
         {
             if (position >= this.size || position < 0)
             {
-                return;
+                throw new System.Exception("Wrong position");
             }
 
             ListElement current = this.firstElement;
@@ -98,7 +98,7 @@
         {
             if (position >= this.size || position < 0)
             {
-                return new Number(int.MinValue);
+                throw new System.Exception("Wrong position");
             }
 
             ListElement current = this.firstElement;

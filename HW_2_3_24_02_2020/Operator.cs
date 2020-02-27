@@ -45,9 +45,11 @@
                     return 600;
                 case '/':
                     return 600;
+                default:
+                    throw new System.Exception($"Wrong operator '{this.sign}'");
             }
 
-            return int.MinValue;
+            // return int.MinValue;
         }
     }
 }

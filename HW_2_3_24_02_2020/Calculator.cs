@@ -5,10 +5,10 @@
         private Scanner scanner;
         private Evaluator evaluator;
 
-        public Calculator()
+        public Calculator(IStack stack)
         {
             this.scanner = new Scanner();
-            this.evaluator = new Evaluator();
+            this.evaluator = new Evaluator(stack);
         }
 
         public double Evaluate(string input)

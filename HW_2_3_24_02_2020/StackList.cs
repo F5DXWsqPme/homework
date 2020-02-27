@@ -9,6 +9,11 @@
             this.list = new List();
         }
 
+        public void Clear()
+        {
+            this.list = new List();
+        }
+
         public void Push(IToken token)
         {
             this.list.AddElement(token, 0);
@@ -16,9 +21,17 @@
 
         public IToken Pop()
         {
-            IToken result = this.list.GetElement(0);
+            IToken result;
 
-            this.list.DeleteElement(0);
+            try
+            {
+                result = this.list.GetElement(0);
+                this.list.DeleteElement(0);
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("Stack empty");
+            }
 
             return result;
         }

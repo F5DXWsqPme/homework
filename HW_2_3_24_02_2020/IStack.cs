@@ -5,5 +5,7 @@
         public abstract IToken Pop();
 
         public abstract void Push(IToken token);
+
+        public abstract void Clear();
     }
 }

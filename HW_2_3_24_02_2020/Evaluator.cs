@@ -2,27 +2,32 @@
 {
     internal class Evaluator
     {
+        private IStack stack;
+
+        public Evaluator(IStack stack)
+        {
+            this.stack = stack;
+        }
+
         public double Evaluate(IQueue tokens)
         {
-            IStack stack = (IStack)new StackArray();
-
             while (!tokens.IsEmpty())
             {
                 IToken current = tokens.Get();
 
                 if (current is Number number)
                 {
-                    stack.Push(number);
+                    this.stack.Push(number);
                 }
                 else
                 {
-                    Number right = (Number)stack.Pop();
-                    Number left = (Number)stack.Pop();
-                    stack.Push(((Operator)current).Evaluate(left, right));
+                    Number right = (Number)this.stack.Pop();
+                    Number left = (Number)this.stack.Pop();
+                    this.stack.Push(((Operator)current).Evaluate(left, right));
                 }
             }
 
-            return ((Number)stack.Pop()).Get();
+            return ((Number)this.stack.Pop()).Get();
         }
     }
 }
