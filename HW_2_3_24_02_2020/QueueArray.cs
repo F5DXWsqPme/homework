@@ -6,7 +6,7 @@
         private int begin;
         private int end;
 
-        public QueueArray(int maximalSize = 1 /* 64 */)
+        public QueueArray(int maximalSize = 64)
         {
             this.array = new IToken[maximalSize];
             this.begin = 0;

@@ -48,8 +48,6 @@
                 default:
                     throw new System.Exception($"Wrong operator '{this.sign}'");
             }
-
-            // return int.MinValue;
         }
     }
 }

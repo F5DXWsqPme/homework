@@ -11,23 +11,34 @@
 
         public double Evaluate(IQueue tokens)
         {
-            while (!tokens.IsEmpty())
-            {
-                IToken current = tokens.Get();
+            double result;
 
-                if (current is Number number)
+            try
+            {
+                while (!tokens.IsEmpty())
                 {
-                    this.stack.Push(number);
+                    IToken current = tokens.Get();
+
+                    if (current is Number number)
+                    {
+                        this.stack.Push(number);
+                    }
+                    else
+                    {
+                        Number right = (Number)this.stack.Pop();
+                        Number left = (Number)this.stack.Pop();
+                        this.stack.Push(((Operator)current).Evaluate(left, right));
+                    }
                 }
-                else
-                {
-                    Number right = (Number)this.stack.Pop();
-                    Number left = (Number)this.stack.Pop();
-                    this.stack.Push(((Operator)current).Evaluate(left, right));
-                }
+
+                result = ((Number)this.stack.Pop()).Get();
+            }
+            catch (System.Exception)
+            {
+                throw new System.Exception("Wrong expression (Evaluation step)");
             }
 
-            return ((Number)this.stack.Pop()).Get();
+            return result;
         }
     }
 }
