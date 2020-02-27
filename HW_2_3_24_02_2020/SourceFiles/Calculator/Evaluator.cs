@@ -13,6 +13,8 @@
         {
             double result;
 
+            this.stack.Clear();
+
             try
             {
                 while (!tokens.IsEmpty())
@@ -34,6 +36,11 @@
                 result = ((Number)this.stack.Pop()).Get();
             }
             catch (System.Exception)
+            {
+                throw new System.Exception("Wrong expression (Evaluation step)");
+            }
+
+            if (!this.stack.IsEmpty())
             {
                 throw new System.Exception("Wrong expression (Evaluation step)");
             }
