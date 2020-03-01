@@ -2,14 +2,14 @@
 
 namespace HW_3_1_01_03_2020.Test
 {
-    class StackListTest
+    class StackArrayTest
     {
         IStack stack;
 
         [SetUp]
         public void Setup()
         {
-            stack = new StackList();
+            stack = new StackArray();
         }
 
         [Test]
@@ -44,6 +44,21 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void StackShouldBeLIFO()
         {
+            var item1 = new Operator('/');
+            var item2 = new Operator('*');
+
+            stack.Push(item1);
+            stack.Push(item2);
+
+            Assert.AreEqual(item2, stack.Pop());
+            Assert.AreEqual(item1, stack.Pop());
+        }
+
+        [Test]
+        public void StackShouldResize()
+        {
+            stack = new StackArray(1);
+
             var item1 = new Operator('/');
             var item2 = new Operator('*');
 

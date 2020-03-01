@@ -21,7 +21,7 @@ namespace HW_3_1_01_03_2020
 
             foreach (char symbol in input)
             {
-                if (char.IsDigit(symbol) || symbol == '.')
+                if (char.IsDigit(symbol) || symbol == ',')
                 {
                     numberString += symbol;
                 }
