@@ -63,6 +63,20 @@ namespace HW_3_1_01_03_2020.Test
         }
 
         [Test]
+        public void ListShouldDeleteElement()
+        {
+            var item0 = new Number(0);
+            var item1 = new Number(1);
+
+            list.AddElement(item0, 0);
+            list.AddElement(item1, 1);
+            list.DeleteElement(1);
+
+            Assert.AreEqual(1, list.GetSize());
+            Assert.AreEqual(item0, list.GetElement(0));
+        }
+
+        [Test]
         public void EmptyListShouldThrowExceptionInGetElementAfterActions()
         {
             list.AddElement(new Number(1), 0);

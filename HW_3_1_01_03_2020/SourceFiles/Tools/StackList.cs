@@ -44,15 +44,13 @@ namespace HW_3_1_01_03_2020
         {
             IToken result;
 
-            try
-            {
-                result = this.list.GetElement(0);
-                this.list.DeleteElement(0);
-            }
-            catch (System.IndexOutOfRangeException)
+            if (list.IsEmpty())
             {
                 throw new System.InvalidOperationException("Stack empty");
             }
+
+            result = this.list.GetElement(0);
+            this.list.DeleteElement(0);
 
             return result;
         }
