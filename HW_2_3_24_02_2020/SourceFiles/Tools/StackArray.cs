@@ -5,9 +5,9 @@
         private IToken[] array;
         private int size;
 
-        public StackArray(int maximalSize = 64)
+        public StackArray(int initialSize = 64)
         {
-            this.array = new IToken[maximalSize];
+            this.array = new IToken[initialSize];
             this.size = 0;
         }
 
