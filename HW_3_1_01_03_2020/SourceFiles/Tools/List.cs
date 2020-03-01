@@ -38,12 +38,13 @@ namespace HW_3_1_01_03_2020
         /// Adds element to position in list.
         /// </summary>
         /// <param name="value">Element to add.</param>
-        /// <param name="position">Position of new element in list (position >= 0 and position <= GetSize()).</param>
+        /// <param name="position">Position of new element in list.</param>
+        /// <exception cref="System.ArgumentOutOfRangeException">Throws at the wrong position.</exception>
         public void AddElement(IToken value, int position)
         {
             if (position > this.size || position < 0)
             {
-                throw new System.Exception("Wrong position");
+                throw new System.ArgumentOutOfRangeException("Wrong position");
             }
 
             this.size++;
@@ -68,11 +69,12 @@ namespace HW_3_1_01_03_2020
         /// Gets element from position.
         /// </summary>
         /// <param name="position">Element pposition.</param>
+        /// <exception cref="System.ArgumentOutOfRangeException">Throws at the wrong position.</exception>
         public void DeleteElement(int position)
         {
             if (position >= this.size || position < 0)
             {
-                throw new System.Exception("Wrong position");
+                throw new System.ArgumentOutOfRangeException("Wrong position");
             }
 
             this.size--;
@@ -98,11 +100,12 @@ namespace HW_3_1_01_03_2020
         /// </summary>
         /// <param name="value">New element value.</param>
         /// <param name="position">Element position.</param>
+        /// <exception cref="System.ArgumentOutOfRangeException">Throws at the wrong position.</exception>
         public void SetElement(IToken value, int position)
         {
             if (position >= this.size || position < 0)
             {
-                throw new System.Exception("Wrong position");
+                throw new System.ArgumentOutOfRangeException("Wrong position");
             }
 
             ListElement current = this.firstElement;
@@ -120,11 +123,12 @@ namespace HW_3_1_01_03_2020
         /// </summary>
         /// <param name="position">Element position.</param>
         /// <returns>Element by position.</returns>
+        /// <exception cref="System.ArgumentOutOfRangeException">Throws at the wrong position.</exception>
         public IToken GetElement(int position)
         {
             if (position >= this.size || position < 0)
             {
-                throw new System.Exception("Wrong position");
+                throw new System.ArgumentOutOfRangeException("Wrong position");
             }
 
             ListElement current = this.firstElement;

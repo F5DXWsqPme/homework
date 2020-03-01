@@ -12,6 +12,7 @@ namespace HW_3_1_01_03_2020
         /// Gets element from a top of the stack and removes it.
         /// </summary>
         /// <returns>Element that was on the top.</returns>
+        /// <exception cref="System.InvalidOperationException">Throws when stack empty.</exception>
         public abstract IToken Pop();
 
         /// <summary>

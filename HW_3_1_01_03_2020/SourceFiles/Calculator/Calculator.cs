@@ -26,6 +26,7 @@ namespace HW_3_1_01_03_2020
         /// </summary>
         /// <param name="input">Input string with expression.</param>
         /// <returns>Result of expression.</returns>
+        /// <exception cref="System.ArgumentException">Throws when expreession dont correct.</exception>
         public double Evaluate(string input)
         {
             IQueue scannedTokens = this.scanner.CreateTokensQueue(input);

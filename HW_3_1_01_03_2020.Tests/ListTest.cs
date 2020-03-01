@@ -11,5 +11,11 @@ namespace HW_3_1_01_03_2020.Test
         {
             list = new List();
         }
+
+        [Test]
+        public void EmptyListShouldThrowExceptionInGetElement()
+        {
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => list.GetElement(0));
+        }
     }
 }

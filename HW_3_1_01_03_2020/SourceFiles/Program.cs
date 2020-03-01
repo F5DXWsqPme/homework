@@ -40,7 +40,7 @@ namespace HW_3_1_01_03_2020
                 double result = calculator.Evaluate(expression);
                 System.Console.WriteLine($"Success: {expression} = {result}");
             }
-            catch (System.Exception exception)
+            catch (System.ArgumentException exception)
             {
                 System.Console.WriteLine($"Error: {exception.Message}");
             }

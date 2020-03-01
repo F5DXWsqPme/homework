@@ -14,9 +14,21 @@ namespace HW_3_1_01_03_2020
         /// Initializes a new instance of the <see cref="Operator"/> class.
         /// </summary>
         /// <param name="sign">Operator sign ('+', '-', '*', '/').</param>
+        /// <exception cref="System.ArgumentException">Throws when sign don't correct.</exception>
         public Operator(char sign)
         {
             this.sign = sign;
+
+            switch (this.sign)
+            {
+                case '+':
+                case '-':
+                case '*':
+                case '/':
+                    break;
+                default:
+                    throw new System.ArgumentException($"Wrong operator '{this.sign}'");
+            }
         }
 
         /// <summary>

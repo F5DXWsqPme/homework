@@ -42,11 +42,12 @@ namespace HW_3_1_01_03_2020
         /// Gets element from a head of the queue and removes it.
         /// </summary>
         /// <returns>lement that was on the head.</returns>
+        /// <exception cref="System.InvalidOperationException">Throws when queue empty.</exception>
         public IToken Get()
         {
             if (this.begin == this.end)
             {
-                throw new System.Exception("Queue empty");
+                throw new System.InvalidOperationException("Queue empty");
             }
 
             IToken result = this.array[this.begin];

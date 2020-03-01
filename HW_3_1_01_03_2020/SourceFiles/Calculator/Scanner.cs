@@ -13,6 +13,7 @@ namespace HW_3_1_01_03_2020
         /// </summary>
         /// <param name="input">Input string.</param>
         /// <returns>Tokens queue.</returns>
+        /// <exception cref="System.ArgumentException">Throws when expreession dont correct.</exception>
         public IQueue CreateTokensQueue(string input)
         {
             IQueue tokens = (IQueue)new QueueArray();
@@ -40,7 +41,7 @@ namespace HW_3_1_01_03_2020
 
             if (tokens.IsEmpty())
             {
-                throw new System.Exception("Tokens queue not created (maybe you entered an empty string)");
+                throw new System.ArgumentException("Tokens queue not created (maybe you entered an empty string)");
             }
 
             return tokens;
@@ -59,9 +60,13 @@ namespace HW_3_1_01_03_2020
                 {
                     tokens.Put(new Number(double.Parse(numberString)));
                 }
-                catch
+                catch (System.OverflowException)
                 {
-                    throw new System.Exception($"Wrong number '{numberString}'");
+                    throw new System.ArgumentException($"Wrong number '{numberString}'");
+                }
+                catch (System.FormatException)
+                {
+                    throw new System.ArgumentException($"Wrong number '{numberString}'");
                 }
             }
         }

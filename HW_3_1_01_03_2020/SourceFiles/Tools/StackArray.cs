@@ -52,11 +52,12 @@ namespace HW_3_1_01_03_2020
         /// Gets element from a top of the stack and removes it.
         /// </summary>
         /// <returns>Element that was on the top.</returns>
+        /// <exception cref="System.InvalidOperationException">Throws when stack empty.</exception>
         public IToken Pop()
         {
             if (this.size == 0)
             {
-                throw new System.Exception("Stack empty");
+                throw new System.InvalidOperationException("Stack empty");
             }
 
             IToken result = this.array[--this.size];

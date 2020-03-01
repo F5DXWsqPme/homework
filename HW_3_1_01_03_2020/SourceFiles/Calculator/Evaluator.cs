@@ -24,6 +24,7 @@ namespace HW_3_1_01_03_2020
         /// </summary>
         /// <param name="tokens">Tokens queue.</param>
         /// <returns>Result of expression.</returns>
+        /// <exception cref="System.ArgumentException">Throws when expreession dont correct.</exception>
         public double Evaluate(IQueue tokens)
         {
             double result;
@@ -50,14 +51,22 @@ namespace HW_3_1_01_03_2020
 
                 result = ((Number)this.stack.Pop()).Value;
             }
-            catch (System.Exception)
+            catch (System.InvalidCastException)
             {
-                throw new System.Exception("Wrong expression (Evaluation step)");
+                throw new System.ArgumentException("Wrong expression (Evaluation step)");
+            }
+            catch (System.ArgumentException)
+            {
+                throw new System.ArgumentException("Wrong expression (Evaluation step)");
+            }
+            catch (System.InvalidOperationException)
+            {
+                throw new System.ArgumentException("Wrong expression (Evaluation step)");
             }
 
             if (!this.stack.IsEmpty())
             {
-                throw new System.Exception("Wrong expression (Evaluation step)");
+                throw new System.ArgumentException("Wrong expression (Evaluation step)");
             }
 
             return result;

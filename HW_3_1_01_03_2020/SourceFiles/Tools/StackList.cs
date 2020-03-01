@@ -39,6 +39,7 @@ namespace HW_3_1_01_03_2020
         /// Gets element from a top of the stack and removes it.
         /// </summary>
         /// <returns>Element that was on the top.</returns>
+        /// <exception cref="System.InvalidOperationException">Throws when stack empty.</exception>
         public IToken Pop()
         {
             IToken result;
@@ -48,9 +49,9 @@ namespace HW_3_1_01_03_2020
                 result = this.list.GetElement(0);
                 this.list.DeleteElement(0);
             }
-            catch (System.Exception)
+            catch (System.IndexOutOfRangeException)
             {
-                throw new System.Exception("Stack empty");
+                throw new System.InvalidOperationException("Stack empty");
             }
 
             return result;

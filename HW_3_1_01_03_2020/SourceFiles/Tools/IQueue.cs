@@ -12,6 +12,7 @@ namespace HW_3_1_01_03_2020
         /// Gets element from a head of the queue and removes it.
         /// </summary>
         /// <returns>Element that was on the head.</returns>
+        /// <exception cref="System.InvalidOperationException">Throws when queue empty.</exception>
         public abstract IToken Get();
 
         /// <summary>
