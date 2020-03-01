@@ -60,5 +60,11 @@ namespace HW_3_1_01_03_2020.Test
 
             Assert.AreEqual(double.PositiveInfinity, result.Value);
         }
+
+        [Test]
+        public void OperatorShouldThrowExceptionInConstructorWithWrongArgument()
+        {
+            Assert.Throws<System.ArgumentException>(() => new Operator(','));
+        }
     }
 }
