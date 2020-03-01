@@ -1,4 +1,4 @@
-﻿namespace HW_2_3_24_02_2020
+namespace HW_2_3_24_02_2020
 {
     internal class QueueArray : IQueue
     {
@@ -6,9 +6,9 @@
         private int begin;
         private int end;
 
-        public QueueArray(int maximalSize = 64)
+        public QueueArray(int initialSize = 64)
         {
-            this.array = new IToken[maximalSize];
+            this.array = new IToken[initialSize];
             this.begin = 0;
             this.end = 0;
         }
