@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class with queue (<see cref="IQueue"/>) implementation as an array.
     /// </summary>
-    internal class QueueArray : IQueue
+    public class QueueArray : IQueue
     {
         private IToken[] array;
         private int begin;

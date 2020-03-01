@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Stack interface, a last-in-first-out container for tokens.
     /// </summary>
-    internal interface IStack
+    public interface IStack
     {
         /// <summary>
         /// Gets element from a top of the stack and removes it.

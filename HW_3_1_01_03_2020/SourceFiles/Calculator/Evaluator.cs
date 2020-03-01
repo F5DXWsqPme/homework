@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class implementation of Reverse-Polish-Notation-evaluator.
     /// </summary>
-    internal class Evaluator
+    public class Evaluator
     {
         private IStack stack;
 

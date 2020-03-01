@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Queue interface, a first-in-first-out container for tokens.
     /// </summary>
-    internal interface IQueue
+    public interface IQueue
     {
         /// <summary>
         /// Gets element from a head of the queue and removes it.

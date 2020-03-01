@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class with imimplementation of tokens scanner.
     /// </summary>
-    internal class Scanner
+    public class Scanner
     {
         /// <summary>
         /// Split input string to tokens queue.

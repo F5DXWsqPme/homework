@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class with implementation of stack-calculator.
     /// </summary>
-    internal class Calculator
+    public class Calculator
     {
         private Scanner scanner;
         private Evaluator evaluator;

@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class with implementation of list.
     /// </summary>
-    internal class List
+    public class List
     {
         private ListElement firstElement;
         private int size;

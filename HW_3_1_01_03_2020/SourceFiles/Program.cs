@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class with Main function.
     /// </summary>
-    internal class Program
+    public class Program
     {
         /// <summary>
         /// Main function in program.

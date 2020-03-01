@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class with stack (<see cref="IStack"/>) implementation as an array.
     /// </summary>
-    internal class StackArray : IStack
+    public class StackArray : IStack
     {
         private IToken[] array;
         private int size;

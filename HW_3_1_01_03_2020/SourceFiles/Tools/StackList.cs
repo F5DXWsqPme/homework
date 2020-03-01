@@ -6,7 +6,7 @@ namespace HW_3_1_01_03_2020
     /// <summary>
     /// Class with stack (<see cref="IStack"/>) implementation as an list.
     /// </summary>
-    internal class StackList : IStack
+    public class StackList : IStack
     {
         private List list;
 
