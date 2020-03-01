@@ -153,12 +153,18 @@ namespace HW_3_1_01_03_2020
                 this.Next = next;
             }
 
+            /// <summary>
+            /// Gets or sets list element value.
+            /// </summary>
             public IToken Value
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets next element reference.
+            /// </summary>
             public ListElement Next
             {
                 get;

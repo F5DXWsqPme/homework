@@ -17,6 +17,9 @@ namespace HW_3_1_01_03_2020
             this.Value = number;
         }
 
+        /// <summary>
+        /// Gets number value.
+        /// </summary>
         public double Value
         {
             get;
