@@ -1,5 +1,11 @@
-﻿namespace HW_2_3_24_02_2020
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_3_1_01_03_2020
 {
+    /// <summary>
+    /// Token interface, base unit of expression.
+    /// </summary>
     internal interface IToken
     {
     }

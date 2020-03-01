@@ -1,14 +1,29 @@
-﻿namespace HW_2_3_24_02_2020
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_3_1_01_03_2020
 {
+    /// <summary>
+    /// Class implementation of Reverse-Polish-Notation-evaluator.
+    /// </summary>
     internal class Evaluator
     {
         private IStack stack;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Evaluator"/> class.
+        /// </summary>
+        /// <param name="stack">Stack for evaluation.</param>
         public Evaluator(IStack stack)
         {
             this.stack = stack;
         }
 
+        /// <summary>
+        /// Evaluate result of expression in Reverse-Polish-Notation.
+        /// </summary>
+        /// <param name="tokens">Tokens queue.</param>
+        /// <returns>Result of expression.</returns>
         public double Evaluate(IQueue tokens)
         {
             double result;
@@ -33,7 +48,7 @@
                     }
                 }
 
-                result = ((Number)this.stack.Pop()).Get();
+                result = ((Number)this.stack.Pop()).Value;
             }
             catch (System.Exception)
             {

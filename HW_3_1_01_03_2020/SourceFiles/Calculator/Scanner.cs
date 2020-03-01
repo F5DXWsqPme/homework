@@ -1,7 +1,18 @@
-﻿namespace HW_2_3_24_02_2020
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_3_1_01_03_2020
 {
+    /// <summary>
+    /// Class with imimplementation of tokens scanner.
+    /// </summary>
     internal class Scanner
     {
+        /// <summary>
+        /// Split input string to tokens queue.
+        /// </summary>
+        /// <param name="input">Input string.</param>
+        /// <returns>Tokens queue.</returns>
         public IQueue CreateTokensQueue(string input)
         {
             IQueue tokens = (IQueue)new QueueArray();
@@ -35,6 +46,11 @@
             return tokens;
         }
 
+        /// <summary>
+        /// Try to convert string to number token (<see cref="Number"/>) and put number to tokens queue.
+        /// </summary>
+        /// <param name="numberString">Input string.</param>
+        /// <param name="tokens">Tokens queue.</param>
         private void TryToCreateNumber(string numberString, IQueue tokens)
         {
             if (numberString.Length != 0)

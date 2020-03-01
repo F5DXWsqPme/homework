@@ -1,18 +1,32 @@
-﻿namespace HW_2_3_24_02_2020
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_3_1_01_03_2020
 {
+    /// <summary>
+    /// Class with queue (<see cref="IQueue"/>) implementation as an array.
+    /// </summary>
     internal class QueueArray : IQueue
     {
         private IToken[] array;
         private int begin;
         private int end;
 
-        public QueueArray(int maximalSize = 64)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueueArray"/> class.
+        /// </summary>
+        /// <param name="initialSize">Initial size of array.</param>
+        public QueueArray(int initialSize = 64)
         {
-            this.array = new IToken[maximalSize];
+            this.array = new IToken[initialSize];
             this.begin = 0;
             this.end = 0;
         }
 
+        /// <summary>
+        /// Adds element to a tail of the queue.
+        /// </summary>
+        /// <param name="token">Element to add.</param>
         public void Put(IToken token)
         {
             if ((this.end + 1) % this.array.Length == this.begin)
@@ -24,6 +38,10 @@
             this.end = (this.end + 1) % this.array.Length;
         }
 
+        /// <summary>
+        /// Gets element from a head of the queue and removes it.
+        /// </summary>
+        /// <returns>lement that was on the head.</returns>
         public IToken Get()
         {
             if (this.begin == this.end)
@@ -39,9 +57,17 @@
             return result;
         }
 
+        /// <summary>
+        /// Check that the queue does not contain elements.
+        /// </summary>
+        /// <returns>true-if empty, false-if otherwise.</returns>
         public bool IsEmpty()
             => this.begin == this.end;
 
+        /// <summary>
+        /// Create new array and copy data to new array.
+        /// </summary>
+        /// <param name="newSize">Size of new array.</param>
         private void ResizeArray(int newSize)
         {
             IToken[] newArray = new IToken[newSize];
