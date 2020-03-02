@@ -4,34 +4,34 @@ namespace HW_3_1_01_03_2020.Test
 {
     public class ListTest
     {
-        List list;
+        private List list;
 
         [SetUp]
         public void Setup()
         {
-            list = new List();
+            this.list = new List();
         }
 
         [Test]
         public void ListShouldEmptyBeforeActions()
         {
-            Assert.AreEqual(0, list.GetSize());
-            Assert.IsTrue(list.IsEmpty());
+            Assert.AreEqual(0, this.list.GetSize());
+            Assert.IsTrue(this.list.IsEmpty());
         }
 
         [Test]
         public void EmptyListShouldThrowExceptionInGetElement()
         {
-            Assert.Throws<System.ArgumentOutOfRangeException>(() => list.GetElement(0));
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => this.list.GetElement(0));
         }
 
         [Test]
         public void ListShouldAddElement()
         {
-            list.AddElement(new Number(1), 0);
+            this.list.AddElement(new Number(1), 0);
 
-            Assert.AreEqual(1, list.GetSize());
-            Assert.IsFalse(list.IsEmpty());
+            Assert.AreEqual(1, this.list.GetSize());
+            Assert.IsFalse(this.list.IsEmpty());
         }
 
         [Test]
@@ -40,11 +40,11 @@ namespace HW_3_1_01_03_2020.Test
             var item0 = new Number(0);
             var item1 = new Number(1);
 
-            list.AddElement(item0, 0);
-            list.AddElement(item1, 1);
+            this.list.AddElement(item0, 0);
+            this.list.AddElement(item1, 1);
 
-            Assert.AreEqual(item0, list.GetElement(0));
-            Assert.AreEqual(item1, list.GetElement(1));
+            Assert.AreEqual(item0, this.list.GetElement(0));
+            Assert.AreEqual(item1, this.list.GetElement(1));
         }
 
         [Test]
@@ -54,12 +54,12 @@ namespace HW_3_1_01_03_2020.Test
             var item1 = new Number(1);
             var item2 = new Operator('/');
 
-            list.AddElement(item0, 0);
-            list.AddElement(item1, 1);
-            list.SetElement(item2, 1);
+            this.list.AddElement(item0, 0);
+            this.list.AddElement(item1, 1);
+            this.list.SetElement(item2, 1);
 
-            Assert.AreEqual(item0, list.GetElement(0));
-            Assert.AreEqual(item2, list.GetElement(1));
+            Assert.AreEqual(item0, this.list.GetElement(0));
+            Assert.AreEqual(item2, this.list.GetElement(1));
         }
 
         [Test]
@@ -68,20 +68,20 @@ namespace HW_3_1_01_03_2020.Test
             var item0 = new Number(0);
             var item1 = new Number(1);
 
-            list.AddElement(item0, 0);
-            list.AddElement(item1, 1);
-            list.DeleteElement(1);
+            this.list.AddElement(item0, 0);
+            this.list.AddElement(item1, 1);
+            this.list.DeleteElement(1);
 
-            Assert.AreEqual(1, list.GetSize());
-            Assert.AreEqual(item0, list.GetElement(0));
+            Assert.AreEqual(1, this.list.GetSize());
+            Assert.AreEqual(item0, this.list.GetElement(0));
         }
 
         [Test]
         public void EmptyListShouldThrowExceptionInGetElementAfterActions()
         {
-            list.AddElement(new Number(1), 0);
-            list.DeleteElement(0);
-            Assert.Throws<System.ArgumentOutOfRangeException>(() => list.GetElement(0));
+            this.list.AddElement(new Number(1), 0);
+            this.list.DeleteElement(0);
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => this.list.GetElement(0));
         }
     }
 }

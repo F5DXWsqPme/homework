@@ -2,33 +2,33 @@
 
 namespace HW_3_1_01_03_2020.Test
 {
-    class QueueArrayTest
+    public class QueueArrayTest
     {
-        IQueue queue;
+        private IQueue queue;
 
         [SetUp]
         public void Setup()
         {
-            queue = new QueueArray();
+            this.queue = new QueueArray();
         }
 
         [Test]
         public void EmptyQueueShouldThrowExceptionInGet()
         {
-            Assert.Throws<System.InvalidOperationException>(() => queue.Get());
+            Assert.Throws<System.InvalidOperationException>(() => this.queue.Get());
         }
 
         [Test]
         public void EmptyQueueShouldEmpty()
         {
-            Assert.IsTrue(queue.IsEmpty());
+            Assert.IsTrue(this.queue.IsEmpty());
         }
 
         [Test]
         public void QueueShouldNotEmptyAfterPut()
         {
-            queue.Put(new Number(1));
-            Assert.IsFalse(queue.IsEmpty());
+            this.queue.Put(new Number(1));
+            Assert.IsFalse(this.queue.IsEmpty());
         }
 
         [Test]
@@ -36,9 +36,9 @@ namespace HW_3_1_01_03_2020.Test
         {
             var item = new Operator('/');
 
-            queue.Put(item);
+            this.queue.Put(item);
 
-            Assert.AreEqual(item, queue.Get());
+            Assert.AreEqual(item, this.queue.Get());
         }
 
         [Test]
@@ -47,36 +47,36 @@ namespace HW_3_1_01_03_2020.Test
             var item1 = new Operator('/');
             var item2 = new Operator('*');
 
-            queue.Put(item1);
-            queue.Put(item2);
+            this.queue.Put(item1);
+            this.queue.Put(item2);
 
-            Assert.AreEqual(item1, queue.Get());
-            Assert.AreEqual(item2, queue.Get());
+            Assert.AreEqual(item1, this.queue.Get());
+            Assert.AreEqual(item2, this.queue.Get());
         }
 
         [Test]
         public void QueueShouldResize()
         {
-            queue = new QueueArray(1);
+            this.queue = new QueueArray(1);
 
             var item1 = new Operator('/');
             var item2 = new Operator('*');
 
-            queue.Put(item1);
-            queue.Put(item2);
+            this.queue.Put(item1);
+            this.queue.Put(item2);
 
-            Assert.AreEqual(item1, queue.Get());
-            Assert.AreEqual(item2, queue.Get());
+            Assert.AreEqual(item1, this.queue.Get());
+            Assert.AreEqual(item2, this.queue.Get());
         }
 
         [Test]
         public void EmptyQueueShouldThrowExceptionInGetAfterActions()
         {
-            queue.Put(new Number(1));
-            queue.Put(new Number(2));
-            queue.Get();
-            queue.Get();
-            Assert.Throws<System.InvalidOperationException>(() => queue.Get());
+            this.queue.Put(new Number(1));
+            this.queue.Put(new Number(2));
+            this.queue.Get();
+            this.queue.Get();
+            Assert.Throws<System.InvalidOperationException>(() => this.queue.Get());
         }
     }
 }

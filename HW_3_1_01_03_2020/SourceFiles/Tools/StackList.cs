@@ -44,7 +44,7 @@ namespace HW_3_1_01_03_2020
         {
             IToken result;
 
-            if (list.IsEmpty())
+            if (this.list.IsEmpty())
             {
                 throw new System.InvalidOperationException("Stack empty");
             }

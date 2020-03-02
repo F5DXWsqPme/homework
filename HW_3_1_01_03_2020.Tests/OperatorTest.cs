@@ -2,9 +2,9 @@
 
 namespace HW_3_1_01_03_2020.Test
 {
-    class OperatorTest
+    public class OperatorTest
     {
-        Operator oper;
+        private Operator oper;
 
         [SetUp]
         public void Setup()
@@ -14,9 +14,9 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void OperatorShouldEvaluateSum()
         {
-            oper = new Operator('+');
+            this.oper = new Operator('+');
 
-            Number result = oper.Evaluate(new Number(1), new Number(7));
+            Number result = this.oper.Evaluate(new Number(1), new Number(7));
 
             Assert.AreEqual(8, result.Value);
         }
@@ -24,9 +24,9 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void OperatorShouldEvaluateDifference()
         {
-            oper = new Operator('-');
+            this.oper = new Operator('-');
 
-            Number result = oper.Evaluate(new Number(1), new Number(7));
+            Number result = this.oper.Evaluate(new Number(1), new Number(7));
 
             Assert.AreEqual(-6, result.Value);
         }
@@ -34,9 +34,9 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void OperatorShouldEvaluateQuotient()
         {
-            oper = new Operator('/');
+            this.oper = new Operator('/');
 
-            Number result = oper.Evaluate(new Number(-35), new Number(7));
+            Number result = this.oper.Evaluate(new Number(-35), new Number(7));
 
             Assert.AreEqual(-5, result.Value);
         }
@@ -44,9 +44,9 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void OperatorShouldEvaluateProduct()
         {
-            oper = new Operator('*');
+            this.oper = new Operator('*');
 
-            Number result = oper.Evaluate(new Number(5), new Number(7));
+            Number result = this.oper.Evaluate(new Number(5), new Number(7));
 
             Assert.AreEqual(35, result.Value);
         }
@@ -54,9 +54,9 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void OperatorShouldDivideByZero()
         {
-            oper = new Operator('/');
+            this.oper = new Operator('/');
 
-            Number result = oper.Evaluate(new Number(35), new Number(0));
+            Number result = this.oper.Evaluate(new Number(35), new Number(0));
 
             Assert.AreEqual(double.PositiveInfinity, result.Value);
         }

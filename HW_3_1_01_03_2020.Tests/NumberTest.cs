@@ -2,9 +2,9 @@
 
 namespace HW_3_1_01_03_2020.Test
 {
-    class NumberTest
+    public class NumberTest
     {
-        Number number;
+        private Number number;
 
         [SetUp]
         public void Setup()
@@ -14,9 +14,9 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void NumberShouldGetCorrectValue()
         {
-            number = new Number(5);
+            this.number = new Number(5);
 
-            double result = number.Value;
+            double result = this.number.Value;
 
             Assert.AreEqual(result, 5);
         }

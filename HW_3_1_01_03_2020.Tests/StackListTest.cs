@@ -2,33 +2,33 @@
 
 namespace HW_3_1_01_03_2020.Test
 {
-    class StackListTest
+    public class StackListTest
     {
-        IStack stack;
+        private IStack stack;
 
         [SetUp]
         public void Setup()
         {
-            stack = new StackList();
+            this.stack = new StackList();
         }
 
         [Test]
         public void EmptyStackShouldThrowExceptionInPop()
         {
-            Assert.Throws<System.InvalidOperationException>(() => stack.Pop());
+            Assert.Throws<System.InvalidOperationException>(() => this.stack.Pop());
         }
 
         [Test]
         public void EmptyStackShouldEmpty()
         {
-            Assert.IsTrue(stack.IsEmpty());
+            Assert.IsTrue(this.stack.IsEmpty());
         }
 
         [Test]
         public void StackShouldNotEmptyAfterPush()
         {
-            stack.Push(new Number(1));
-            Assert.IsFalse(stack.IsEmpty());
+            this.stack.Push(new Number(1));
+            Assert.IsFalse(this.stack.IsEmpty());
         }
 
         [Test]
@@ -36,9 +36,9 @@ namespace HW_3_1_01_03_2020.Test
         {
             var item = new Operator('/');
 
-            stack.Push(item);
+            this.stack.Push(item);
 
-            Assert.AreEqual(item, stack.Pop());
+            Assert.AreEqual(item, this.stack.Pop());
         }
 
         [Test]
@@ -47,21 +47,21 @@ namespace HW_3_1_01_03_2020.Test
             var item1 = new Operator('/');
             var item2 = new Operator('*');
 
-            stack.Push(item1);
-            stack.Push(item2);
+            this.stack.Push(item1);
+            this.stack.Push(item2);
 
-            Assert.AreEqual(item2, stack.Pop());
-            Assert.AreEqual(item1, stack.Pop());
+            Assert.AreEqual(item2, this.stack.Pop());
+            Assert.AreEqual(item1, this.stack.Pop());
         }
 
         [Test]
         public void EmptyStackShouldThrowExceptionInPopAfterActions()
         {
-            stack.Push(new Number(1));
-            stack.Push(new Number(2));
-            stack.Pop();
-            stack.Pop();
-            Assert.Throws<System.InvalidOperationException>(() => stack.Pop());
+            this.stack.Push(new Number(1));
+            this.stack.Push(new Number(2));
+            this.stack.Pop();
+            this.stack.Pop();
+            Assert.Throws<System.InvalidOperationException>(() => this.stack.Pop());
         }
     }
 }
