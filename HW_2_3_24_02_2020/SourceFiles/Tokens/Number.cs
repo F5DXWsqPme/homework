@@ -1,17 +1,29 @@
-﻿namespace HW_2_3_24_02_2020
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_2_3_24_02_2020
 {
-    internal class Number : IToken
+    /// <summary>
+    /// Class with implementation of number (<see cref="IToken"/> subtype).
+    /// </summary>
+    public class Number : IToken
     {
-        private double number;
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Number"/> class.
+        /// </summary>
+        /// <param name="number">Number.</param>
         public Number(double number)
         {
-            this.number = number;
+            this.Value = number;
         }
 
-        public double Get()
+        /// <summary>
+        /// Gets number value.
+        /// </summary>
+        public double Value
         {
-            return this.number;
+            get;
+            private set;
         }
     }
 }

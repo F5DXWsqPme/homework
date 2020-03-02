@@ -1,7 +1,17 @@
-﻿namespace HW_2_3_24_02_2020
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_2_3_24_02_2020
 {
-    internal class Program
+    /// <summary>
+    /// Class with Main function.
+    /// </summary>
+    public class Program
     {
+        /// <summary>
+        /// Main function in program.
+        /// </summary>
+        /// <param name="args">Program arguments.</param>
         public static void Main(string[] args)
         {
             System.Console.Write("Input stack implementation type (array or list): ");
@@ -30,7 +40,7 @@
                 double result = calculator.Evaluate(expression);
                 System.Console.WriteLine($"Success: {expression} = {result}");
             }
-            catch (System.Exception exception)
+            catch (System.ArgumentException exception)
             {
                 System.Console.WriteLine($"Error: {exception.Message}");
             }

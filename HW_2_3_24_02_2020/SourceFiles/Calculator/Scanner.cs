@@ -1,7 +1,19 @@
-﻿namespace HW_2_3_24_02_2020
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_2_3_24_02_2020
 {
-    internal class Scanner
+    /// <summary>
+    /// Class with imimplementation of tokens scanner.
+    /// </summary>
+    public class Scanner
     {
+        /// <summary>
+        /// Split input string to tokens queue.
+        /// </summary>
+        /// <param name="input">Input string.</param>
+        /// <returns>Tokens queue.</returns>
+        /// <exception cref="System.ArgumentException">Throws when expreession dont correct.</exception>
         public IQueue CreateTokensQueue(string input)
         {
             IQueue tokens = (IQueue)new QueueArray();
@@ -9,7 +21,7 @@
 
             foreach (char symbol in input)
             {
-                if (char.IsDigit(symbol) || symbol == '.')
+                if (char.IsDigit(symbol) || symbol == ',')
                 {
                     numberString += symbol;
                 }
@@ -29,12 +41,17 @@
 
             if (tokens.IsEmpty())
             {
-                throw new System.Exception("Tokens queue not created (maybe you entered an empty string)");
+                throw new System.ArgumentException("Tokens queue not created (maybe you entered an empty string)");
             }
 
             return tokens;
         }
 
+        /// <summary>
+        /// Try to convert string to number token (<see cref="Number"/>) and put number to tokens queue.
+        /// </summary>
+        /// <param name="numberString">Input string.</param>
+        /// <param name="tokens">Tokens queue.</param>
         private void TryToCreateNumber(string numberString, IQueue tokens)
         {
             if (numberString.Length != 0)
@@ -43,9 +60,13 @@
                 {
                     tokens.Put(new Number(double.Parse(numberString)));
                 }
-                catch
+                catch (System.OverflowException)
                 {
-                    throw new System.Exception($"Wrong number '{numberString}'");
+                    throw new System.ArgumentException($"Wrong number '{numberString}'");
+                }
+                catch (System.FormatException)
+                {
+                    throw new System.ArgumentException($"Wrong number '{numberString}'");
                 }
             }
         }
