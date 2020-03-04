@@ -5,18 +5,6 @@
         private ListElement firstElement;
         private int size;
 
-        public List()
-        {
-            this.size = 0;
-            this.firstElement = null;
-        }
-
-        ~List()
-        {
-            this.firstElement = null;
-            this.size = 0;
-        }
-
         public int GetSize()
         {
             return this.size;
