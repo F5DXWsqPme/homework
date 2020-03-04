@@ -27,8 +27,6 @@ namespace HW_3_1_01_03_2020
         /// <exception cref="System.ArgumentException">Throws when expreession dont correct.</exception>
         public double Evaluate(IQueue tokens)
         {
-            double result;
-
             this.stack.Clear();
 
             try
@@ -49,7 +47,14 @@ namespace HW_3_1_01_03_2020
                     }
                 }
 
-                result = ((Number)this.stack.Pop()).Value;
+                double result = ((Number)this.stack.Pop()).Value;
+
+                if (!this.stack.IsEmpty())
+                {
+                    throw new System.ArgumentException("Wrong expression (Evaluation step)");
+                }
+
+                return result;
             }
             catch (System.InvalidCastException)
             {
@@ -63,13 +68,6 @@ namespace HW_3_1_01_03_2020
             {
                 throw new System.ArgumentException("Wrong expression (Evaluation step)");
             }
-
-            if (!this.stack.IsEmpty())
-            {
-                throw new System.ArgumentException("Wrong expression (Evaluation step)");
-            }
-
-            return result;
         }
     }
 }

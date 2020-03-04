@@ -45,7 +45,8 @@ namespace HW_3_1_01_03_2020
                 this.ResizeArray((this.size + 1) * 2);
             }
 
-            this.array[this.size++] = token;
+            this.array[this.size] = token;
+            this.size++;
         }
 
         /// <summary>

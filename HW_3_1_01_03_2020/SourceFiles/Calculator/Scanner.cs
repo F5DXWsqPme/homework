@@ -16,7 +16,7 @@ namespace HW_3_1_01_03_2020
         /// <exception cref="System.ArgumentException">Throws when expreession dont correct.</exception>
         public IQueue CreateTokensQueue(string input)
         {
-            IQueue tokens = (IQueue)new QueueArray();
+            IQueue tokens = new QueueArray();
             string numberString = new string(string.Empty);
 
             foreach (char symbol in input)

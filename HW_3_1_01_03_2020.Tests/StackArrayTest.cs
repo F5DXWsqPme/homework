@@ -2,10 +2,8 @@
 
 namespace HW_3_1_01_03_2020.Test
 {
-    public class StackArrayTest
+    public class StackArrayTest : StackTest
     {
-        private IStack stack;
-
         [SetUp]
         public void Setup()
         {
@@ -15,68 +13,37 @@ namespace HW_3_1_01_03_2020.Test
         [Test]
         public void EmptyStackShouldThrowExceptionInPop()
         {
-            Assert.Throws<System.InvalidOperationException>(() => this.stack.Pop());
+            TestEmptyStackShouldThrowExceptionInPop();
         }
 
         [Test]
         public void EmptyStackShouldEmpty()
         {
-            Assert.IsTrue(this.stack.IsEmpty());
+            TestEmptyStackShouldEmpty();
         }
 
         [Test]
         public void StackShouldNotEmptyAfterPush()
         {
-            this.stack.Push(new Number(1));
-            Assert.IsFalse(this.stack.IsEmpty());
+            TestStackShouldNotEmptyAfterPush();
         }
 
         [Test]
         public void StackShouldPushAndPopEqualValues()
         {
-            var item = new Operator('/');
-
-            this.stack.Push(item);
-
-            Assert.AreEqual(item, this.stack.Pop());
+            TestStackShouldPushAndPopEqualValues();
         }
 
         [Test]
         public void StackShouldBeLIFO()
         {
-            var item1 = new Operator('/');
-            var item2 = new Operator('*');
-
-            this.stack.Push(item1);
-            this.stack.Push(item2);
-
-            Assert.AreEqual(item2, this.stack.Pop());
-            Assert.AreEqual(item1, this.stack.Pop());
-        }
-
-        [Test]
-        public void StackShouldResize()
-        {
-            this.stack = new StackArray(1);
-
-            var item1 = new Operator('/');
-            var item2 = new Operator('*');
-
-            this.stack.Push(item1);
-            this.stack.Push(item2);
-
-            Assert.AreEqual(item2, this.stack.Pop());
-            Assert.AreEqual(item1, this.stack.Pop());
+            TestStackShouldBeLIFO();
         }
 
         [Test]
         public void EmptyStackShouldThrowExceptionInPopAfterActions()
         {
-            this.stack.Push(new Number(1));
-            this.stack.Push(new Number(2));
-            this.stack.Pop();
-            this.stack.Pop();
-            Assert.Throws<System.InvalidOperationException>(() => this.stack.Pop());
+            TestEmptyStackShouldThrowExceptionInPopAfterActions();
         }
     }
 }
