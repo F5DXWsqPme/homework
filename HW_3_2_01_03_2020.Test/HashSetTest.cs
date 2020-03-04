@@ -16,7 +16,6 @@ namespace HW_3_2_01_03_2020.Test
         public void EmptyHashSetShouldDeleteElement()
         {
             this.hashSet.DeleteElement(1);
-            Assert.Pass();
         }
 
         [Test]
@@ -49,6 +48,7 @@ namespace HW_3_2_01_03_2020.Test
             this.hashSet.DeleteElement(1);
 
             Assert.IsFalse(this.hashSet.IsElementExists(1));
+            Assert.IsTrue(this.hashSet.IsElementExists(6));
         }
 
         [Test]

@@ -10,16 +10,7 @@ namespace HW_3_2_01_03_2020
     {
         private ListElement firstElement;
         private int size;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="List"/> class.
-        /// </summary>
-        public List()
-        {
-            this.size = 0;
-            this.firstElement = null;
-        }
-
+                     
         /// <summary>
         /// Returns size of list.
         /// </summary>
