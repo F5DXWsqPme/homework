@@ -1,5 +1,4 @@
-﻿using System;
-/// <summary>
+﻿/// <summary>
 /// Global namespace.
 /// </summary>
 namespace HW_4_1_08_03_2020
@@ -7,7 +6,7 @@ namespace HW_4_1_08_03_2020
     /// <summary>
     /// Class with implementation of evaluator class.
     /// </summary>
-    public class TreeEvaluator
+    public sealed class TreeEvaluator
     {
     }
 }
