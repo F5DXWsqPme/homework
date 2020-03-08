@@ -1,0 +1,12 @@
+﻿/// <summary>
+/// Global namespace.
+/// </summary>
+namespace HW_4_1_08_03_2020
+{
+    /// <summary>
+    /// Class with implementation of multiplication operator.
+    /// </summary>
+    public class Multiplication : Operator
+    {
+    }
+}
