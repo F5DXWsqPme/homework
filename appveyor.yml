@@ -9,10 +9,10 @@ environment:
     - branch: (get-item env:APPVEYOR_REPO_BRANCH).Value
 
 before_build:
-  - nuget restore (%branch%/Solution.sln)
+  - nuget restore (%branch%/Solution/Solution.sln)
 
 build_script:
-  - msbuild %branch%/Solution.sln
+  - msbuild %branch%/Solution/Solution.sln
 
 test_script:
-  - dotnet test %branch%/Solution.sln
+  - dotnet test %branch%/Solution/Solution.sln
