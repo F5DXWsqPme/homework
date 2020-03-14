@@ -1,10 +1,14 @@
 image: Visual Studio 2019                           
 
+environment:
+  matrix:
+    branch: (get-item env:APPVEYOR_REPO_BRANCH).Value
+
 before_build:
-  - nuget restore (get-item env:APPVEYOR_REPO_BRANCH).Value/Solution.sln
+  - nuget restore %branch%/Solution.sln
 
 build:
-  project: (get-item env:APPVEYOR_REPO_BRANCH).Value/Solution.sln
+  project: %branch%/Solution.sln
 
 test_script:
-  - dotnet test (get-item env:APPVEYOR_REPO_BRANCH).Value/Solution.sln
+  - dotnet test %branch%/Solution.sln
