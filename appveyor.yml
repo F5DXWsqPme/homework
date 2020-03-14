@@ -1,8 +1,4 @@
-image: Visual Studio 2019
-
-install:
-  - git clone https://github.com/F5DXWsqPme C:\projects\homework
-  - git checkout (get-item env:APPVEYOR_REPO_BRANCH)
+image: Visual Studio 2019                           
 
 before_build:
   - nuget restore (get-item env:APPVEYOR_REPO_BRANCH).Value/Solution.sln
