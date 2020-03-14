@@ -3,16 +3,12 @@ image: Visual Studio 2019
 branches:
   except:
     - master
-
-environment:
-  matrix:
-    - branch: (get-item env:APPVEYOR_REPO_BRANCH).Value
-
+                                         
 before_build:
-  - nuget restore (%branch%/Solution/Solution.sln)
+  - nuget restore HW2_5_1/Solution/Solution.sln
 
 build_script:
-  - msbuild %branch%/Solution/Solution.sln
+  - msbuild HW2_5_1/Solution/Solution.sln
 
 test_script:
-  - dotnet test %branch%/Solution/Solution.sln
+  - dotnet test HW2_5_1/Solution/Solution.sln
