@@ -7,8 +7,8 @@ environment:
 before_build:
   - nuget restore %branch%/Solution.sln
 
-build:
-  project: %branch%/Solution.sln
+build_script:
+  - msbuild %branch%/Solution.sln
 
 test_script:
   - dotnet test %branch%/Solution.sln
