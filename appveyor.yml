@@ -1,5 +1,9 @@
 image: Visual Studio 2019                           
                 
+branches:
+  except:
+    - master
+
 environment:
   matrix:
     - solution_name: HW2_6_1
