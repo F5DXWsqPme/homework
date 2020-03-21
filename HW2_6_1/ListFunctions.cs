@@ -51,23 +51,20 @@ namespace HW2_6_1
         }
 
         /// <summary>
-        /// Transform list function with accumalate variable.
+        /// Evaluate accumalate variable.
         /// </summary>
-        /// <param name="list">List for transform.</param>
+        /// <param name="list">List for evaluations.</param>
         /// <param name="accumulator">Accumulate variable initial value.</param>
-        /// <param name="transform">Transform function.</param>
-        /// <returns>List after transforms.</returns>
-        public static List<int> Fold(List<int> list, int accumulator, Func<int, int, int> transform)
+        /// <param name="transform">Evaluate function.</param>
+        /// <returns>Evaluations result.</returns>
+        public static int Fold(List<int> list, int accumulator, Func<int, int, int> transform)
         {
-            var result = new List<int>(list.Count);
-
             foreach (int item in list)
             {
                 accumulator = transform(accumulator, item);
-                result.Add(accumulator);
             }
 
-            return result;
+            return accumulator;
         }
     }
 }

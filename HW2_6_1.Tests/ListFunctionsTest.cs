@@ -58,33 +58,22 @@ namespace HW2_6_1.Tests
         }
 
         [Test]
-        public void FoldShouldReturnEmptyList()
+        public void FoldShouldDontTransformEmptyList()
         {
-            Assert.AreEqual(0, ListFunctions.Fold(new List<int>(), 1, (accumulator, item) => -1).Count);
+            Assert.AreEqual(1, ListFunctions.Fold(new List<int>(), 1, (accumulator, item) => -1));
         }
 
         [Test]
-        public void FoldShouldReturnEqualList()
+        public void FoldShouldReturnRightValue()
         {
-            var list = new List<int>() { 1, 2, 3, 4, 5, 6 };
-
-            Assert.AreEqual(list, ListFunctions.Fold(list, 0, (accumulator, item) => item));
-        }
-
-        [Test]
-        public void FoldShouldReturnRightTransformedList()
-        {
-            Assert.AreEqual(
-                new List<int>() { 1, 0, 2, 1, 3 },
-                ListFunctions.Fold(new List<int>() { 0, 1, 2, 3, 4 }, -1, (accumulator, item) => item - accumulator));
+            Assert.AreEqual(3, ListFunctions.Fold(new List<int>() { 0, 1, 2, 3, 4 }, -1, (accumulator, item) => item - accumulator));
         }
 
         [Test]
         public void FoldShouldReturnAriphmeticProgression()
         {
-            Assert.AreEqual(
-                new List<int>() { 1, 3, 6, 10, 15 },
-                ListFunctions.Fold(new List<int>() { 1, 2, 3, 4, 5 }, 0, (accumulator, item) => item + accumulator));
+            Assert.AreEqual(15, ListFunctions.Fold(new List<int>() { 1, 2, 3, 4, 5 }, 0, (accumulator, item) => item + accumulator));
+            Assert.AreEqual(21, ListFunctions.Fold(new List<int>() { 2, 3, 4, 5, 6 }, 1, (accumulator, item) => item + accumulator));
         }
     }
 }
