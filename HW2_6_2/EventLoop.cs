@@ -32,11 +32,6 @@ namespace HW2_6_2
         public event Action<object, EventArgs> DownHandler = (sender, arguments) => { };
 
         /// <summary>
-        /// Action handler timer.
-        /// </summary>
-        public event Action<object, EventArgs> TimerHandler = (sender, arguments) => { };
-
-        /// <summary>
         /// Gets or sets delta time in milliseconds.
         /// </summary>
         public int DeltaTime { get; set; } = 200;
@@ -46,14 +41,8 @@ namespace HW2_6_2
         /// </summary>
         public void Run()
         {
-            bool exitFlag = false;
-
-            while (!exitFlag)
+            while (true)
             {
-                Thread.Sleep(this.DeltaTime);
-
-                this.TimerHandler(this, EventArgs.Empty);
-
                 var key = Console.ReadKey(true);
                 switch (key.Key)
                 {
@@ -70,11 +59,12 @@ namespace HW2_6_2
                         this.DownHandler(this, EventArgs.Empty);
                         break;
                     case ConsoleKey.Escape:
-                        exitFlag = true;
-                        break;
+                        return;
                     default:
                         break;
                 }
+
+                Thread.Sleep(this.DeltaTime);
             }
         }
     }

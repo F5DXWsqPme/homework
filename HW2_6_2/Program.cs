@@ -19,6 +19,7 @@ namespace HW2_6_2
         public static void Main(string[] args)
         {
             var eventLoop = new EventLoop();
+            using var game = new Game(eventLoop);
 
             eventLoop.Run();
         }

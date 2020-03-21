@@ -17,7 +17,7 @@ namespace HW2_6_2.Test
             string path = "MapTest.txt";
             using (System.IO.StreamWriter writer = System.IO.File.CreateText(path))
             {
-                writer.WriteLine("WW  W W ");
+                writer.WriteLine(" W  W W ");
             }
 
             Assert.Throws<ArgumentException>(() => new Map(path));
@@ -31,7 +31,7 @@ namespace HW2_6_2.Test
             {
                 writer.WriteLine(3);
                 writer.WriteLine(2);
-                writer.WriteLine("WW ");
+                writer.WriteLine(" W ");
                 writer.Write("W W ");
             }
 
@@ -46,7 +46,7 @@ namespace HW2_6_2.Test
             {
                 writer.WriteLine(3);
                 writer.WriteLine(2);
-                writer.WriteLine("WW ");
+                writer.WriteLine(" W ");
                 writer.WriteLine("W W");
                 writer.Write(" W ");
             }
@@ -56,6 +56,21 @@ namespace HW2_6_2.Test
 
         [Test]
         public void MapShouldThrowExceptionWhenWrongLetter()
+        {
+            string path = "MapTest.txt";
+            using (System.IO.StreamWriter writer = System.IO.File.CreateText(path))
+            {
+                writer.WriteLine(3);
+                writer.WriteLine(2);
+                writer.WriteLine(" W ");
+                writer.WriteLine("W?W");
+            }
+
+            Assert.Throws<ArgumentException>(() => new Map(path));
+        }
+
+        [Test]
+        public void MapShouldThrowExceptionWhenInFirstCellWall()
         {
             string path = "MapTest.txt";
             using (System.IO.StreamWriter writer = System.IO.File.CreateText(path))
@@ -77,7 +92,7 @@ namespace HW2_6_2.Test
             {
                 writer.WriteLine(3);
                 writer.WriteLine(2);
-                writer.WriteLine("WW ");
+                writer.WriteLine(" W ");
                 writer.Write("W W");
             }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 /// <summary>
@@ -66,6 +65,11 @@ namespace HW2_6_2
                 }
             }
             else
+            {
+                throw new ArgumentException("Wrong file format.");
+            }
+
+            if (this.IsWall(0, 0))
             {
                 throw new ArgumentException("Wrong file format.");
             }
