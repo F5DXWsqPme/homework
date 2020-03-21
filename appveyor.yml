@@ -1,10 +1,14 @@
 image: Visual Studio 2019                           
-                                                          
+                
+matrix:
+  environment:
+    - solution_name: HW2_6_1
+                                          
 before_build:
-  - nuget restore HW2_5_1/Solution/Solution.sln
+  - nuget restore %solution_name%/%solution_name%.sln
 
 build_script:
-  - msbuild HW2_5_1/Solution/Solution.sln
+  - msbuild %solution_name%/%solution_name%.sln
 
 test_script:
-  - dotnet test HW2_5_1/Solution/Solution.sln
+  - dotnet test %solution_name%/%solution_name%.sln
