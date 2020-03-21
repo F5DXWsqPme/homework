@@ -1,0 +1,18 @@
+image: Visual Studio 2019                           
+                
+branches:
+  except:
+    - master
+
+environment:
+  matrix:
+    - solution_name: HW2_6_2
+                                          
+before_build:
+  - nuget restore %solution_name%/%solution_name%.sln
+
+build_script:
+  - msbuild %solution_name%/%solution_name%.sln
+
+test_script:
+  - dotnet test %solution_name%/%solution_name%.sln
