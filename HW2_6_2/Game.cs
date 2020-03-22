@@ -21,7 +21,9 @@ namespace HW2_6_2
         /// Initializes a new instance of the <see cref="Game"/> class.
         /// </summary>
         /// <param name="eventLoop">Main event loop.</param>
-        public Game(EventLoop eventLoop)
+        /// <param name="fileName">Name of file with map.</param>
+        /// <exception cref="ArgumentException">Throws when file not exist or file wrong.</exception>
+        public Game(EventLoop eventLoop, string fileName)
         {
             this.eventLoop = eventLoop;
 
@@ -30,7 +32,7 @@ namespace HW2_6_2
             this.eventLoop.DownHandler += this.OnDown;
             this.eventLoop.UpHandler += this.OnUp;
 
-            this.map = new Map("Map.txt");
+            this.map = new Map(fileName);
 
             this.Draw();
         }

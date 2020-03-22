@@ -19,7 +19,16 @@ namespace HW2_6_2
         public static void Main(string[] args)
         {
             var eventLoop = new EventLoop();
-            using var game = new Game(eventLoop);
+
+            try
+            {
+                using var game = new Game(eventLoop, "Map.txt");
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine("File with map not loaded.");
+                return;
+            }
 
             eventLoop.Run();
         }
