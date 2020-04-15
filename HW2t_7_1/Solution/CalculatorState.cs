@@ -16,8 +16,10 @@ namespace Solution
     {
         private decimal resultNumber;
         private decimal newNumber;
+        private decimal sign;
         private string operatorString;
         private bool errorFlag;
+        private bool equalFlag;
         private int displaySize;
         private int dotPosition;
 
@@ -33,6 +35,7 @@ namespace Solution
             this.displaySize = displaySize;
             this.operatorString = string.Empty;
             this.dotPosition = 0;
+            this.sign = 1;
         }
 
         /// <summary>
@@ -41,7 +44,7 @@ namespace Solution
         /// <returns>String for display.</returns>
         public string GetOutputString()
         {
-            if (Math.Abs(this.resultNumber) >= (decimal)Math.Pow(10, this.displaySize - 3))
+            if (Math.Abs(this.resultNumber) >= (decimal)Math.Pow(10, this.displaySize - 1))
             {
                 this.errorFlag = true;
             }
@@ -52,7 +55,7 @@ namespace Solution
                 return errorString.Substring(0, Math.Min(this.displaySize, errorString.Length));
             }
 
-            string format = "G"/* + this.displaySize.ToString("G")*/;
+            string format = "G";
             string valueString;
 
             if (this.operatorString == string.Empty)
@@ -71,7 +74,7 @@ namespace Solution
 
             if (this.dotPosition == 1)
             {
-                valueString += ".";
+                valueString += ",";
             }
 
             return valueString.Substring(0, Math.Min(this.displaySize, valueString.Length));
@@ -86,6 +89,12 @@ namespace Solution
         {
             if (int.TryParse(clickedButtonText, out int digit))
             {
+                if (this.equalFlag)
+                {
+                    this.resultNumber = 0;
+                    this.equalFlag = false;
+                }
+
                 if (digit > 9 || digit < 0)
                 {
                     throw new ArgumentException("Unknown button");
@@ -95,12 +104,12 @@ namespace Solution
 
                 if (this.dotPosition == 0)
                 {
-                    transform = (decimal number) => (10 * number) + digit;
+                    transform = (decimal number) => (10 * number) + (this.sign * digit);
                 }
                 else
                 {
                     this.dotPosition++;
-                    transform = (decimal number) => number + (digit * (decimal)Math.Pow(10, 1 - this.dotPosition));
+                    transform = (decimal number) => number + (this.sign * digit * (decimal)Math.Pow(10, 1 - this.dotPosition));
                 }
 
                 if (this.operatorString == string.Empty)
@@ -114,6 +123,8 @@ namespace Solution
             }
             else
             {
+                this.equalFlag = false;
+
                 if (clickedButtonText == "C")
                 {
                     this.resultNumber = 0;
@@ -121,6 +132,8 @@ namespace Solution
                     this.dotPosition = 0;
                     this.errorFlag = false;
                     this.operatorString = string.Empty;
+                    this.sign = 1;
+                    this.equalFlag = false;
                 }
                 else if (clickedButtonText == ".")
                 {
@@ -130,6 +143,19 @@ namespace Solution
                     }
 
                     this.dotPosition = 1;
+                }
+                else if (clickedButtonText == "+/-")
+                {
+                    if (this.operatorString == string.Empty)
+                    {
+                        this.resultNumber = -this.resultNumber;
+                    }
+                    else
+                    {
+                        this.newNumber = -this.newNumber;
+                    }
+
+                    this.sign = -this.sign;
                 }
                 else
                 {
@@ -155,10 +181,12 @@ namespace Solution
                     this.newNumber = 0;
                     this.dotPosition = 0;
                     this.operatorString = clickedButtonText;
+                    this.sign = 1;
 
                     if (this.operatorString == "=")
                     {
                         this.operatorString = string.Empty;
+                        this.equalFlag = true;
                     }
                     else if (this.operatorString != "+" &&
                              this.operatorString != "-" &&

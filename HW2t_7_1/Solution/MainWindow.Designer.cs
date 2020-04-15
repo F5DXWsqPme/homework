@@ -48,6 +48,7 @@
             this.buttonEqual = new Solution.MainWindow.NoFocusButton();
             this.buttonClear = new Solution.MainWindow.NoFocusButton();
             this.buttonDot = new Solution.MainWindow.NoFocusButton();
+            this.noFocusButton1 = new Solution.MainWindow.NoFocusButton();
             this.groupBoxOutput.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -176,9 +177,9 @@
             this.buttonDigit0.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonDigit0.CausesValidation = false;
             this.buttonDigit0.Font = new System.Drawing.Font("Comic Sans MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.buttonDigit0.Location = new System.Drawing.Point(118, 591);
+            this.buttonDigit0.Location = new System.Drawing.Point(12, 591);
             this.buttonDigit0.Name = "buttonDigit0";
-            this.buttonDigit0.Size = new System.Drawing.Size(99, 100);
+            this.buttonDigit0.Size = new System.Drawing.Size(206, 100);
             this.buttonDigit0.TabIndex = 10;
             this.buttonDigit0.Text = "0";
             this.buttonDigit0.UseVisualStyleBackColor = true;
@@ -277,6 +278,19 @@
             this.buttonDot.UseVisualStyleBackColor = true;
             this.buttonDot.Click += new System.EventHandler(this.ButtonClicked);
             // 
+            // noFocusButton1
+            // 
+            this.noFocusButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.noFocusButton1.CausesValidation = false;
+            this.noFocusButton1.Font = new System.Drawing.Font("Comic Sans MS", 30F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.noFocusButton1.Location = new System.Drawing.Point(224, 591);
+            this.noFocusButton1.Name = "noFocusButton1";
+            this.noFocusButton1.Size = new System.Drawing.Size(215, 100);
+            this.noFocusButton1.TabIndex = 18;
+            this.noFocusButton1.Text = "+/-";
+            this.noFocusButton1.UseVisualStyleBackColor = true;
+            this.noFocusButton1.Click += new System.EventHandler(this.ButtonClicked);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 18F);
@@ -284,6 +298,7 @@
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.CausesValidation = false;
             this.ClientSize = new System.Drawing.Size(452, 703);
+            this.Controls.Add(this.noFocusButton1);
             this.Controls.Add(this.buttonDot);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonEqual);
@@ -334,6 +349,7 @@
         private NoFocusButton buttonEqual;
         private NoFocusButton buttonClear;
         private NoFocusButton buttonDot;
+        private NoFocusButton noFocusButton1;
     }
 }
 
