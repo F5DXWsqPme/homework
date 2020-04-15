@@ -27,8 +27,15 @@ namespace Solution
         /// Initializes a new instance of the <see cref="CalculatorState"/> class.
         /// </summary>
         /// <param name="displaySize">Output string length.</param>
+        /// <exception cref="ArgumentException">Throws when display size less than 2.</exception>
         public CalculatorState(int displaySize)
         {
+            int minimalDisplaySize = 2;
+            if (displaySize < minimalDisplaySize)
+            {
+                throw new ArgumentException("Wrong dispaly size");
+            }
+
             this.resultNumber = 0;
             this.newNumber = 0;
             this.errorFlag = false;
@@ -55,17 +62,23 @@ namespace Solution
                 return errorString.Substring(0, Math.Min(this.displaySize, errorString.Length));
             }
 
-            string format = "G";
-            string valueString;
+            decimal value;
 
             if (this.operatorString == string.Empty)
             {
-                valueString = this.resultNumber.ToString(format);
+                value = this.resultNumber;
             }
             else
             {
-                valueString = this.newNumber.ToString(format);
+                value = this.newNumber;
             }
+
+            int numberOfIntegerDigits = (int)Math.Max(Math.Ceiling(Math.Log10(Math.Abs((double)value))), 1);
+            int precision = Math.Min(Math.Max(this.displaySize - numberOfIntegerDigits - 2, 0), 28);
+
+            value = Math.Round(value, precision, MidpointRounding.AwayFromZero);
+
+            string valueString = value.ToString("G");
 
             if (!valueString.StartsWith("-"))
             {
@@ -89,37 +102,7 @@ namespace Solution
         {
             if (int.TryParse(clickedButtonText, out int digit))
             {
-                if (this.equalFlag)
-                {
-                    this.resultNumber = 0;
-                    this.equalFlag = false;
-                }
-
-                if (digit > 9 || digit < 0)
-                {
-                    throw new ArgumentException("Unknown button");
-                }
-
-                Func<decimal, decimal> transform;
-
-                if (this.dotPosition == 0)
-                {
-                    transform = (decimal number) => (10 * number) + (this.sign * digit);
-                }
-                else
-                {
-                    this.dotPosition++;
-                    transform = (decimal number) => number + (this.sign * digit * (decimal)Math.Pow(10, 1 - this.dotPosition));
-                }
-
-                if (this.operatorString == string.Empty)
-                {
-                    this.resultNumber = transform(this.resultNumber);
-                }
-                else
-                {
-                    this.newNumber = transform(this.newNumber);
-                }
+                this.UpdateDigit(digit, clickedButtonText);
             }
             else
             {
@@ -159,43 +142,83 @@ namespace Solution
                 }
                 else
                 {
-                    if (this.operatorString != string.Empty)
-                    {
-                        switch (this.operatorString)
-                        {
-                            case "+":
-                                this.resultNumber += this.newNumber;
-                                break;
-                            case "-":
-                                this.resultNumber -= this.newNumber;
-                                break;
-                            case "*":
-                                this.resultNumber *= this.newNumber;
-                                break;
-                            case "/":
-                                this.resultNumber /= this.newNumber;
-                                break;
-                        }
-                    }
-
-                    this.newNumber = 0;
-                    this.dotPosition = 0;
-                    this.operatorString = clickedButtonText;
-                    this.sign = 1;
-
-                    if (this.operatorString == "=")
-                    {
-                        this.operatorString = string.Empty;
-                        this.equalFlag = true;
-                    }
-                    else if (this.operatorString != "+" &&
-                             this.operatorString != "-" &&
-                             this.operatorString != "*" &&
-                             this.operatorString != "/")
-                    {
-                        throw new ArgumentException("Unknown button");
-                    }
+                    this.UpdateOperator(clickedButtonText);
                 }
+            }
+        }
+
+        private void UpdateDigit(int digit, string clickedButtonText)
+        {
+            if (this.equalFlag)
+            {
+                this.resultNumber = 0;
+                this.equalFlag = false;
+            }
+
+            if (clickedButtonText.Length != 1)
+            {
+                throw new ArgumentException("Unknown button");
+            }
+
+            Func<decimal, decimal> transform;
+
+            if (this.dotPosition == 0)
+            {
+                transform = (decimal number) => (10 * number) + (this.sign * digit);
+            }
+            else
+            {
+                this.dotPosition++;
+                transform = (decimal number) => number + (this.sign * digit * (decimal)Math.Pow(10, 1 - this.dotPosition));
+            }
+
+            if (this.operatorString == string.Empty)
+            {
+                this.resultNumber = transform(this.resultNumber);
+            }
+            else
+            {
+                this.newNumber = transform(this.newNumber);
+            }
+        }
+
+        private void UpdateOperator(string clickedButtonText)
+        {
+            if (this.operatorString != string.Empty)
+            {
+                switch (this.operatorString)
+                {
+                    case "+":
+                        this.resultNumber += this.newNumber;
+                        break;
+                    case "-":
+                        this.resultNumber -= this.newNumber;
+                        break;
+                    case "*":
+                        this.resultNumber *= this.newNumber;
+                        break;
+                    case "/":
+                        this.resultNumber /= this.newNumber;
+                        break;
+                }
+            }
+
+            this.newNumber = 0;
+            this.dotPosition = 0;
+            this.operatorString = clickedButtonText;
+            this.sign = 1;
+
+            if (this.operatorString == "=")
+            {
+                this.operatorString = string.Empty;
+                this.equalFlag = true;
+            }
+            else if (this.operatorString != "+" &&
+                     this.operatorString != "-" &&
+                     this.operatorString != "*" &&
+                     this.operatorString != "/")
+            {
+                throw new ArgumentException("Unknown button");
             }
         }
     }
