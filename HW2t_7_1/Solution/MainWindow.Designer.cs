@@ -239,7 +239,7 @@
             this.outputLabel.Name = "outputLabel";
             this.outputLabel.Size = new System.Drawing.Size(416, 100);
             this.outputLabel.TabIndex = 0;
-            this.outputLabel.Text = "12345678901234567890";
+            this.outputLabel.Text = "-123456789012";
             this.outputLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // buttonEqual
