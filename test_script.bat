@@ -4,8 +4,8 @@ FOR /D %%n IN (HW2t_*) DO (
 
 FOR /D %%n IN (HW2ft_*) DO ( 
     IF EXIST %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll (
-        clr.bat net-4.7 nunit-console %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll
+        nunit-console %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll /framework:net-4.7
     ) ELSE (
-        clr.bat net-4.7 nunit-console %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll
+        nunit-console %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll /framework:net-4.7
     )
 )
