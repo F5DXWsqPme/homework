@@ -107,7 +107,7 @@ namespace Solution.Tests
             state.Update("1");
             state.Update("=");
 
-            Assert.AreEqual("+1,69", state.GetOutputString());
+            Assert.AreEqual("+1.69", state.GetOutputString());
         }
 
         [Test]
@@ -150,7 +150,7 @@ namespace Solution.Tests
             state.Update("3");
             state.Update("=");
 
-            Assert.AreEqual("+0,67", state.GetOutputString());
+            Assert.AreEqual("+0.67", state.GetOutputString());
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace Solution.Tests
             state.Update("5");
             state.Update("=");
 
-            Assert.AreEqual("-2,5", state.GetOutputString());
+            Assert.AreEqual("-2.5", state.GetOutputString());
         }
 
         [Test]
@@ -204,7 +204,7 @@ namespace Solution.Tests
             state.Update("5");
             state.Update("=");
 
-            Assert.AreEqual("+1,5", state.GetOutputString());
+            Assert.AreEqual("+1.5", state.GetOutputString());
         }
 
         [Test]
@@ -219,7 +219,7 @@ namespace Solution.Tests
             state.Update("5");
             state.Update("=");
 
-            Assert.AreEqual("+1,5", state.GetOutputString());
+            Assert.AreEqual("+1.5", state.GetOutputString());
         }
 
         [Test]
@@ -232,7 +232,7 @@ namespace Solution.Tests
             state.Update("3");
             state.Update("=");
 
-            Assert.AreEqual("+0,666666667", state.GetOutputString());
+            Assert.AreEqual("+0.666666667", state.GetOutputString());
         }
 
         [Test]

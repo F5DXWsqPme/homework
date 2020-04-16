@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Globalization;
 
 /// <summary>
 /// Global namespace.
@@ -77,7 +78,7 @@ namespace Solution
 
             value = Math.Round(value, precision, MidpointRounding.AwayFromZero);
 
-            string valueString = value.ToString("G");
+            string valueString = value.ToString("G", CultureInfo.InvariantCulture);
 
             if (!valueString.StartsWith("-"))
             {
@@ -86,7 +87,7 @@ namespace Solution
 
             if (this.dotPosition == 1)
             {
-                valueString += ",";
+                valueString += ".";
             }
 
             return valueString.Substring(0, Math.Min(this.displaySize, valueString.Length));
@@ -105,8 +106,6 @@ namespace Solution
             }
             else
             {
-                this.equalFlag = false;
-
                 if (clickedButtonText == "C")
                 {
                     this.resultNumber = 0;
@@ -119,6 +118,12 @@ namespace Solution
                 }
                 else if (clickedButtonText == ".")
                 {
+                    if (this.equalFlag)
+                    {
+                        this.resultNumber = 0;
+                        this.equalFlag = false;
+                    }
+
                     if (this.dotPosition != 0)
                     {
                         this.errorFlag = true;
@@ -128,6 +133,12 @@ namespace Solution
                 }
                 else if (clickedButtonText == "+/-")
                 {
+                    if (this.equalFlag)
+                    {
+                        this.resultNumber = 0;
+                        this.equalFlag = false;
+                    }
+
                     if (this.operatorString == string.Empty)
                     {
                         this.resultNumber = -this.resultNumber;
@@ -141,6 +152,7 @@ namespace Solution
                 }
                 else
                 {
+                    this.equalFlag = false;
                     this.UpdateOperator(clickedButtonText);
                 }
             }
