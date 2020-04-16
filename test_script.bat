@@ -3,9 +3,5 @@ FOR /D %%n IN (HW2t_*) DO (
 )
 
 FOR /D %%n IN (HW2ft_*) DO ( 
-    IF EXIST %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll (
-        nunit-console %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll /framework:net-3.5
-    ) ELSE (
-        nunit-console %%n/Solution.Tests\bin\Debug\netcoreapp3.1\Solution.Tests.dll /framework:net-3.5
-    )
+    nunit-console %%n/Solution.Tests/Solution.Tests.csproj
 )
