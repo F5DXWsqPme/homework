@@ -11,7 +11,7 @@ namespace Solution
     /// <summary>
     /// Class with main function.
     /// </summary>
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// Main function.
