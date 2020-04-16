@@ -30,8 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.progressBarSecond = new System.Windows.Forms.ProgressBar();
-            this.groupBoxClock = new System.Windows.Forms.GroupBox();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.groupBoxClock = new Solution.MainWindow.DoubleBufferedGroupBox();
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
@@ -59,7 +58,7 @@
             // timerUpdate
             // 
             this.timerUpdate.Enabled = true;
-            this.timerUpdate.Interval = 10;
+            this.timerUpdate.Interval = 200;
             this.timerUpdate.Tick += new System.EventHandler(this.UpdateEvent);
             // 
             // MainWindow
@@ -80,8 +79,7 @@
         #endregion
 
         private System.Windows.Forms.ProgressBar progressBarSecond;
-        private System.Windows.Forms.GroupBox groupBoxClock;
-        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private DoubleBufferedGroupBox groupBoxClock;
         private System.Windows.Forms.Timer timerUpdate;
     }
 }
