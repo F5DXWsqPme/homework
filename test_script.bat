@@ -3,5 +3,5 @@ FOR /D %%n IN (HW2t_*) DO (
 )
 
 FOR /D %%n IN (HW2ft_*) DO ( 
-    nunit-console %%n/Solution.Tests/Solution.Tests.csproj
+    nunit-console %%n/Solution/Solution.sln
 )

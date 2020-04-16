@@ -7,4 +7,5 @@ FOR /D %%n IN (HW2wt_*) DO (
 )
 
 FOR /D %%n IN (HW2ft_*) DO ( 
-    msbuild %%n/Solution/Solution.sln)
+    msbuild %%n/Solution/Solution.sln
+)
