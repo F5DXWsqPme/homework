@@ -318,7 +318,7 @@
             this.Controls.Add(this.buttonDigit3);
             this.Controls.Add(this.buttonDigit1);
             this.Font = new System.Drawing.Font("Comic Sans MS", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            // this.Icon = ((System.Drawing.Icon)(resources.GetObject("logo.ico")));
             this.MaximumSize = new System.Drawing.Size(470, 750);
             this.MinimumSize = new System.Drawing.Size(470, 750);
             this.Name = "MainWindow";
