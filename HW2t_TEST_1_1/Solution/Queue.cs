@@ -74,7 +74,7 @@
             /// <summary>
             /// Gets or sets element value.
             /// </summary>
-            public T Value { get; set; }
+            public T Value { get; }
 
             /// <summary>
             /// Gets element priority.
