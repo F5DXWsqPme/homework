@@ -58,6 +58,12 @@
         /// </summary>
         private class QueueElement
         {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="QueueElement"/> class.
+            /// </summary>
+            /// <param name="value">Element value.</param>
+            /// <param name="priority">Element priority.</param>
+            /// <param name="next">Reference tor next element.</param>
             public QueueElement(T value, int priority, QueueElement next = null)
             {
                 this.Value = value;
