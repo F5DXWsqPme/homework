@@ -156,6 +156,10 @@ namespace Solution
             return Enumerable.Empty<T>().GetEnumerator();
         }
 
+        /// <summary>
+        /// Remove all elements which not contains other container.
+        /// </summary>
+        /// <param name="other">Other container.</param>
         public void IntersectWith(IEnumerable<T> other)
         {
             throw new NotImplementedException();
@@ -186,9 +190,47 @@ namespace Solution
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Remove item.
+        /// </summary>
+        /// <param name="item">Element for delete.</param>
+        /// <returns>True-if success, false-if otherwise.</returns>
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            TreeNode current = this.root;
+            TreeNode previus = null;
+            TreeNode previusPrevius = null;
+            int oldCompareResult = 0;
+            int compareResult = 0;
+
+            while (current != null)
+            {
+                previusPrevius = previus;
+                previus = current;
+
+                oldCompareResult = compareResult;
+                compareResult = this.comparer.Compare(item, current.Value);
+
+                if (compareResult < 0)
+                {
+                    current = current.Left;
+                }
+                else if (compareResult > 0)
+                {
+                    current = current.Right;
+                }
+                else
+                {
+                    if (oldCompareResult < 0)
+                    {
+
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool SetEquals(IEnumerable<T> other)
@@ -257,6 +299,21 @@ namespace Solution
             }
 
             /// <summary>
+            /// Gets or sets node value.
+            /// </summary>
+            public T Value { get; set; }
+
+            /// <summary>
+            /// Gets or sets right subtree.
+            /// </summary>
+            public TreeNode Right { get; set; }
+
+            /// <summary>
+            /// Gets or sets left subtree.
+            /// </summary>
+            public TreeNode Left { get; set; }
+
+            /// <summary>
             /// Get set enumerator function.
             /// </summary>
             /// <returns>Set elements enumerator.</returns>
@@ -305,21 +362,6 @@ namespace Solution
                     }
                 }
             }
-
-            /// <summary>
-            /// Gets or sets node value.
-            /// </summary>
-            public T Value { get; set; }
-
-            /// <summary>
-            /// Gets or sets right subtree.
-            /// </summary>
-            public TreeNode Right { get; set; }
-
-            /// <summary>
-            /// Gets or sets left subtree.
-            /// </summary>
-            public TreeNode Left { get; set; }
         }
     }
 }
