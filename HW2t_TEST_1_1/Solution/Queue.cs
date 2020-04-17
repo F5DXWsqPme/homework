@@ -15,12 +15,6 @@
         /// <param name="priority">Element priority.</param>
         public void Enqueue(T item, int priority)
         {
-            if (this.beginQueue == null)
-            {
-                this.beginQueue = new QueueElement(item, priority);
-                return;
-            }
-
             QueueElement current = this.beginQueue;
             QueueElement previus = null;
 
@@ -30,7 +24,14 @@
                 current = current.Next;
             }
 
-            previus.Next = new QueueElement(item, priority, current);
+            if (previus == null)
+            {
+                this.beginQueue = new QueueElement(item, priority, current);
+            }
+            else
+            {
+                previus.Next = new QueueElement(item, priority, current);
+            }
         }
 
         /// <summary>
