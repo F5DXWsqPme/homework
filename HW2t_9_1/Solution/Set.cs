@@ -100,27 +100,7 @@ namespace Solution
         /// <returns>True-if exist, false-if otherwise.</returns>
         public bool Contains(T item)
         {
-            TreeNode current = this.root;
-
-            while (current != null)
-            {
-                int compareResult = this.comparer.Compare(item, current.Value);
-
-                if (compareResult < 0)
-                {
-                    current = current.Left;
-                }
-                else if (compareResult > 0)
-                {
-                    current = current.Right;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return this.ContainsInTree(item, this.root);
         }
 
         /// <summary>
@@ -137,9 +117,16 @@ namespace Solution
             }
         }
 
+        /// <summary>
+        /// Remove all elements from set which contains in other container.
+        /// </summary>
+        /// <param name="other">Other container.</param>
         public void ExceptWith(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            foreach (var item in other)
+            {
+                this.Remove(item);
+            }
         }
 
         /// <summary>
@@ -162,32 +149,103 @@ namespace Solution
         /// <param name="other">Other container.</param>
         public void IntersectWith(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            var oldRoot = this.root;
+
+            foreach (var item in other)
+            {
+                if (this.ContainsInTree(item, oldRoot))
+                {
+                    this.Add(item);
+                }
+            }
         }
 
+        /// <summary>
+        /// Determine whether the current set is proper subset of other container.
+        /// </summary>
+        /// <param name="other">Other container.</param>
+        /// <returns>True-if subset, false-if otherwise.</returns>
         public bool IsProperSubsetOf(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            return this.IsSubsetOf(other) && !this.SetEquals(other);
         }
 
+        /// <summary>
+        /// Determine whether the current set is proper superset of other container.
+        /// </summary>
+        /// <param name="other">Other container.</param>
+        /// <returns>True-if superset, false-if otherwise.</returns>
         public bool IsProperSupersetOf(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            return this.IsSupersetOf(other) && !this.SetEquals(other);
         }
 
+        /// <summary>
+        /// Determine whether the current set is subset of other container.
+        /// </summary>
+        /// <param name="other">Other container.</param>
+        /// <returns>True-if subset, false-if otherwise.</returns>
         public bool IsSubsetOf(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            var comparedSet = new Set<T>(this.comparer);
+
+            foreach (var item in other)
+            {
+                if (this.Contains(item))
+                {
+                    comparedSet.Add(item);
+                }
+            }
+
+            if (comparedSet.Count == this.count)
+            {
+                return true;
+            }
+
+            return false;
         }
 
+        /// <summary>
+        /// Determine whether the current set is superset of other container.
+        /// </summary>
+        /// <param name="other">Other container.</param>
+        /// <returns>True-if superset, false-if otherwise.</returns>
         public bool IsSupersetOf(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            var comparedSet = new Set<T>(this.comparer);
+
+            foreach (var item in other)
+            {
+                if (!this.Contains(item))
+                {
+                    return false;
+                }
+
+                if (!comparedSet.Add(item))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
+        /// <summary>
+        /// Determines whether the current set overlaps with the specified collection.
+        /// </summary>
+        /// <param name="other">Other container.</param>
+        /// <returns>True-if overlaps, false-if otherwise.</returns>
         public bool Overlaps(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            foreach (var item in other)
+            {
+                if (this.Contains(item))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -199,13 +257,11 @@ namespace Solution
         {
             TreeNode current = this.root;
             TreeNode previus = null;
-            TreeNode previusPrevius = null;
             int oldCompareResult = 0;
             int compareResult = 0;
 
             while (current != null)
             {
-                previusPrevius = previus;
                 previus = current;
 
                 oldCompareResult = compareResult;
@@ -221,10 +277,46 @@ namespace Solution
                 }
                 else
                 {
+                    this.count--;
+
+                    if (current.Left == null)
+                    {
+                        if (oldCompareResult < 0)
+                        {
+                            previus.Left = current.Right;
+                        }
+                        else
+                        {
+                            previus.Right = current.Right;
+                        }
+
+                        return true;
+                    }
+
+                    var right = current.Right;
+
                     if (oldCompareResult < 0)
                     {
-
+                        previus.Left = current.Left;
                     }
+                    else
+                    {
+                        previus.Right = current.Left;
+                    }
+
+                    current = current.Left;
+
+                    if (right == null)
+                    {
+                        return true;
+                    }
+
+                    while (current.Right != null)
+                    {
+                        current = current.Right;
+                    }
+
+                    current.Right = right;
 
                     return true;
                 }
@@ -233,9 +325,34 @@ namespace Solution
             return false;
         }
 
+        /// <summary>
+        /// Determines whether the current set and the specified collection contain the same elements.
+        /// </summary>
+        /// <param name="other">Other container.</param>
+        /// <returns>True-if equals, false-if otherwise.</returns>
         public bool SetEquals(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            var comparedSet = new Set<T>(this.comparer);
+
+            foreach (var item in other)
+            {
+                if (!this.Contains(item))
+                {
+                    return false;
+                }
+
+                if (!comparedSet.Add(item))
+                {
+                    return false;
+                }
+            }
+
+            if (this.count != comparedSet.Count)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void SymmetricExceptWith(IEnumerable<T> other)
@@ -263,12 +380,36 @@ namespace Solution
         /// <returns>Items enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (this.root != null)
+            return this.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Check element existance in tree function.
+        /// </summary>
+        /// <param name="item">Element.</param>
+        /// <param name="tree">Tree.</param>
+        /// <returns>True-if exist, false-if otherwise.</returns>
+        private bool ContainsInTree(T item, TreeNode tree)
+        {
+            while (tree != null)
             {
-                return this.root.GetEnumerator();
+                int compareResult = this.comparer.Compare(item, tree.Value);
+
+                if (compareResult < 0)
+                {
+                    tree = tree.Left;
+                }
+                else if (compareResult > 0)
+                {
+                    tree = tree.Right;
+                }
+                else
+                {
+                    return true;
+                }
             }
 
-            return Enumerable.Empty<T>().GetEnumerator();
+            return false;
         }
 
         /// <summary>
@@ -299,9 +440,9 @@ namespace Solution
             }
 
             /// <summary>
-            /// Gets or sets node value.
+            /// Gets node value.
             /// </summary>
-            public T Value { get; set; }
+            public T Value { get; }
 
             /// <summary>
             /// Gets or sets right subtree.
@@ -344,23 +485,7 @@ namespace Solution
             /// <returns>Set elements enumerator.</returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                if (this.Left != null)
-                {
-                    foreach (var item in this.Left)
-                    {
-                        yield return item;
-                    }
-                }
-
-                yield return this.Value;
-
-                if (this.Right != null)
-                {
-                    foreach (var item in this.Right)
-                    {
-                        yield return item;
-                    }
-                }
+                return this.GetEnumerator();
             }
         }
     }
