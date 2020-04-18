@@ -261,61 +261,90 @@ namespace Solution
 
             while (current != null)
             {
-                previus = current;
-
                 oldCompareResult = compareResult;
                 compareResult = this.comparer.Compare(item, current.Value);
 
                 if (compareResult < 0)
                 {
+                    previus = current;
                     current = current.Left;
                 }
                 else if (compareResult > 0)
                 {
+                    previus = current;
                     current = current.Right;
                 }
                 else
                 {
                     this.count--;
 
-                    if (current.Left == null)
+                    if (previus != null)
                     {
+                        if (current.Left == null)
+                        {
+                            if (oldCompareResult < 0)
+                            {
+                                previus.Left = current.Right;
+                            }
+                            else
+                            {
+                                previus.Right = current.Right;
+                            }
+
+                            return true;
+                        }
+
+                        var right = current.Right;
+
                         if (oldCompareResult < 0)
                         {
-                            previus.Left = current.Right;
+                            previus.Left = current.Left;
                         }
                         else
                         {
-                            previus.Right = current.Right;
+                            previus.Right = current.Left;
                         }
 
-                        return true;
-                    }
+                        current = current.Left;
 
-                    var right = current.Right;
+                        if (right == null)
+                        {
+                            return true;
+                        }
 
-                    if (oldCompareResult < 0)
-                    {
-                        previus.Left = current.Left;
+                        while (current.Right != null)
+                        {
+                            current = current.Right;
+                        }
+
+                        current.Right = right;
                     }
                     else
                     {
-                        previus.Right = current.Left;
+                        if (current.Left == null)
+                        {
+                            this.root = current.Right;
+
+                            return true;
+                        }
+
+                        var right = current.Right;
+
+                        this.root = current.Left;
+                        current = current.Left;
+
+                        if (right == null)
+                        {
+                            return true;
+                        }
+
+                        while (current.Right != null)
+                        {
+                            current = current.Right;
+                        }
+
+                        current.Right = right;
                     }
-
-                    current = current.Left;
-
-                    if (right == null)
-                    {
-                        return true;
-                    }
-
-                    while (current.Right != null)
-                    {
-                        current = current.Right;
-                    }
-
-                    current.Right = right;
 
                     return true;
                 }
