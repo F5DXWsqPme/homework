@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -355,14 +354,31 @@ namespace Solution
             return true;
         }
 
+        /// <summary>
+        /// Symmetric substraction function.
+        /// </summary>
+        /// <param name="other">Other container.</param>
         public void SymmetricExceptWith(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            foreach (var item in other)
+            {
+                if (!this.Add(item))
+                {
+                    this.Remove(item);
+                }
+            }
         }
 
+        /// <summary>
+        /// Union sets function.
+        /// </summary>
+        /// <param name="other">Other container.</param>
         public void UnionWith(IEnumerable<T> other)
         {
-            throw new NotImplementedException();
+            foreach (var item in other)
+            {
+                this.Add(item);
+            }
         }
 
         /// <summary>
