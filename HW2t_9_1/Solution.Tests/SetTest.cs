@@ -343,7 +343,7 @@ namespace Solution.Tests
                 this.set.Add(item);
             }
 
-            return this.set.Equals(compareWith);
+            return this.set.SetEquals(compareWith);
         }
 
         private class DefaultComparer<T> : IComparer<T>
