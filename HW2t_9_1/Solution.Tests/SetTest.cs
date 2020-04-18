@@ -316,6 +316,40 @@ namespace Solution.Tests
             Assert.AreEqual(1, this.setString.Count);
         }
 
+        [Test]
+        public void SetShouldClear()
+        {
+            this.setInt.Add(0);
+            this.setString.Add("0");
+            this.setInt.Add(1);
+            this.setString.Add("1");
+
+            this.setInt.Clear();
+            this.setString.Clear();
+
+            Assert.AreEqual(0, this.setInt.Count);
+            Assert.AreEqual(0, this.setString.Count);
+            Assert.IsFalse(this.setInt.Contains(1));
+            Assert.IsFalse(this.setString.Contains("1"));
+            Assert.IsFalse(this.setInt.Contains(0));
+            Assert.IsFalse(this.setString.Contains("0"));
+
+            this.setInt.Add(1);
+            this.setString.Add("1");
+
+            Assert.AreEqual(1, this.setInt.Count);
+            Assert.AreEqual(1, this.setString.Count);
+            Assert.IsTrue(this.setInt.Contains(1));
+            Assert.IsTrue(this.setString.Contains("1"));
+        }
+
+        [Test]
+        public void SetShouldNotReadOnly()
+        {
+            Assert.IsFalse(this.setInt.IsReadOnly);
+            Assert.IsFalse(this.setString.IsReadOnly);
+        }
+
         /* From now on, only Set <int> is in the tests, because the remaining
          * methods use the methods already tested and should not have any differences.
          */
