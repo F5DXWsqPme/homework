@@ -150,6 +150,8 @@ namespace Solution
         {
             var oldRoot = this.root;
 
+            this.Clear();
+
             foreach (var item in other)
             {
                 if (this.ContainsInTree(item, oldRoot))

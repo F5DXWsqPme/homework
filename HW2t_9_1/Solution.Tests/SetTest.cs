@@ -350,9 +350,70 @@ namespace Solution.Tests
             Assert.IsFalse(this.setString.IsReadOnly);
         }
 
+        private static IEnumerable<TestCaseData> CopyToTestData()
+        {
+            yield return new TestCaseData(new List<int>() { }, 0).SetCategory("Empty");
+            yield return new TestCaseData(new List<int>() { }, 3).SetCategory("Empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4, 5 }, 0).SetCategory("Not empty");
+            yield return new TestCaseData(new List<int>() { 5, 4, 3, 2, 1 }, 0).SetCategory("Not empty inversed");
+        }
+
+        [TestCaseSource(nameof(CopyToTestData))]
+        [Test]
+        public void SetShouldCopyTo(List<int> data, int position)
+        {
+            foreach (var item in data)
+            {
+                this.setInt.Add(item);
+                this.setString.Add(item.ToString());
+            }
+
+            int size = data.Count + position + 1;
+
+            int[] arrayInt = new int[size];
+            string[] arrayString = new string[size];
+
+            this.setInt.CopyTo(arrayInt, position);
+            this.setString.CopyTo(arrayString, position);
+
+            data.Sort();
+
+            IEnumerator<int> iteratorInt = this.setInt.GetEnumerator();
+            IEnumerator<string> iteratorString = this.setString.GetEnumerator();
+
+            for (int i = 0; i < size; i++)
+            {
+                if (i < position || i >= position + data.Count)
+                {
+                    Assert.AreEqual(0, arrayInt[i]);
+                    Assert.AreEqual(null, arrayString[i]);
+                }
+                else
+                {
+                    iteratorInt.MoveNext();
+                    iteratorString.MoveNext();
+
+                    Assert.AreEqual(iteratorInt.Current, arrayInt[i]);
+                    Assert.AreEqual(iteratorString.Current, arrayString[i]);
+                }
+            }
+        }
+
         /* From now on, only Set <int> is in the tests, because the remaining
          * methods use the methods already tested and should not have any differences.
          */
+
+        [Test]
+        public void SetShouldAddElementsBecauseSetIsCollection()
+        {
+            ((ICollection<int>)this.set).Add(1);
+            ((ICollection<int>)this.set).Add(2);
+
+            Assert.IsTrue(this.set.Contains(1));
+            Assert.IsTrue(this.set.Contains(2));
+            Assert.IsFalse(this.set.Contains(0));
+            Assert.IsFalse(this.set.Contains(3));
+        }
 
         private static IEnumerable<TestCaseData> SetEqualsTestData()
         {
@@ -360,12 +421,16 @@ namespace Solution.Tests
             yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { }).Returns(false).SetCategory("Empty and not empty");
             yield return new TestCaseData(new List<int>() { }, new List<int> { 1, 2, 3 }).Returns(false).SetCategory("Empty and not empty");
             yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }).Returns(true).SetCategory("Equals");
-            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }).Returns(true).SetCategory("Different order");
-            yield return new TestCaseData(new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }).Returns(true).SetCategory("Different order");
-            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }).Returns(false).SetCategory("Subset");
-            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Superset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }).Returns(false).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }).Returns(false).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Proper superset");
             yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }).Returns(false).SetCategory("Overlaps");
             yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }).Returns(false).SetCategory("Not overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }).Returns(false).SetCategory("Not overlaps");
         }
 
         [TestCaseSource(nameof(SetEqualsTestData))]
@@ -378,6 +443,340 @@ namespace Solution.Tests
             }
 
             return this.set.SetEquals(compareWith);
+        }
+
+        private static IEnumerable<TestCaseData> OverlapsTestData()
+        {
+            yield return new TestCaseData(new List<int>() { }, new List<int> { }).Returns(false).SetCategory("Empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { }).Returns(false).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { }, new List<int> { 1, 2, 3 }).Returns(false).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }).Returns(true).SetCategory("Equals");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }).Returns(true).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }).Returns(true).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }).Returns(true).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }).Returns(true).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }).Returns(true).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }).Returns(true).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }).Returns(false).SetCategory("Not overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }).Returns(false).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(OverlapsTestData))]
+        [Test]
+        public bool SetShouldGetOverlaps(List<int> data, List<int> compareWith)
+        {
+            foreach (var item in data)
+            {
+                this.set.Add(item);
+            }
+
+            return this.set.Overlaps(compareWith);
+        }
+
+        private static IEnumerable<TestCaseData> SubsetTestData()
+        {
+            yield return new TestCaseData(new List<int>() { }, new List<int> { }).Returns(true).SetCategory("Empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { }).Returns(false).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { }, new List<int> { 1, 2, 3 }).Returns(true).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }).Returns(true).SetCategory("Equals");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }).Returns(true).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }).Returns(true).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }).Returns(false).SetCategory("Not overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }).Returns(false).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(SubsetTestData))]
+        [Test]
+        public bool SetShouldGetSubset(List<int> data, List<int> compareWith)
+        {
+            foreach (var item in data)
+            {
+                this.set.Add(item);
+            }
+
+            return this.set.IsSubsetOf(compareWith);
+        }
+
+        private static IEnumerable<TestCaseData> ProperSubsetTestData()
+        {
+            yield return new TestCaseData(new List<int>() { }, new List<int> { }).Returns(false).SetCategory("Empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { }).Returns(false).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { }, new List<int> { 1, 2, 3 }).Returns(true).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }).Returns(false).SetCategory("Equals");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }).Returns(false).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }).Returns(false).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }).Returns(true).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }).Returns(true).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }).Returns(false).SetCategory("Not overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }).Returns(false).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(ProperSubsetTestData))]
+        [Test]
+        public bool SetShouldGetProperSubset(List<int> data, List<int> compareWith)
+        {
+            foreach (var item in data)
+            {
+                this.set.Add(item);
+            }
+
+            return this.set.IsProperSubsetOf(compareWith);
+        }
+
+        private static IEnumerable<TestCaseData> SupersetTestData()
+        {
+            yield return new TestCaseData(new List<int>() { }, new List<int> { }).Returns(true).SetCategory("Empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { }).Returns(true).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { }, new List<int> { 1, 2, 3 }).Returns(false).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }).Returns(true).SetCategory("Equals");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }).Returns(true).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }).Returns(false).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }).Returns(false).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }).Returns(true).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }).Returns(true).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }).Returns(false).SetCategory("Not overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }).Returns(false).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(SupersetTestData))]
+        [Test]
+        public bool SetShouldGetSuperset(List<int> data, List<int> compareWith)
+        {
+            foreach (var item in data)
+            {
+                this.set.Add(item);
+            }
+
+            return this.set.IsSupersetOf(compareWith);
+        }
+
+        private static IEnumerable<TestCaseData> ProperSupersetTestData()
+        {
+            yield return new TestCaseData(new List<int>() { }, new List<int> { }).Returns(false).SetCategory("Empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { }).Returns(true).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { }, new List<int> { 1, 2, 3 }).Returns(false).SetCategory("Empty and not empty");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }).Returns(false).SetCategory("Equals");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }).Returns(false).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }).Returns(false).SetCategory("Equals but different order");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }).Returns(false).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }).Returns(false).SetCategory("Proper subset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }).Returns(true).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }).Returns(true).SetCategory("Proper superset");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }).Returns(false).SetCategory("Overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }).Returns(false).SetCategory("Not overlaps");
+            yield return new TestCaseData(new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }).Returns(false).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(ProperSupersetTestData))]
+        [Test]
+        public bool SetShouldGetProperSuperset(List<int> data, List<int> compareWith)
+        {
+            foreach (var item in data)
+            {
+                this.set.Add(item);
+            }
+
+            return this.set.IsProperSupersetOf(compareWith);
+        }
+
+        private static IEnumerable<TestCaseData> UnionTestData()
+        {
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { }, new List<int> { }).SetCategory("Empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { }, new List<int> { 1, 2, 3 }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { 1, 2, 3 }, new List<int> { 1, 2, 3 }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }, new List<int> { 1, 2, 3 }).SetCategory("Equals");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }, new List<int> { 1, 2, 3 }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }, new List<int> { 1, 2, 3 }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }, new List<int> { 1, 2, 3, 4 }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }, new List<int> { 1, 2, 3, 4 }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }, new List<int> { 1, 2, 3, 4 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }, new List<int> { 1, 2, 3, 4 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }, new List<int> { 1, 2, 3, 4 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }, new List<int> { 1, 2, 3, 4, 5 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }, new List<int> { 1, 2, 3, 4, 5, 6 }).SetCategory("Not overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }, new List<int> { 1, 2, 3, 4, 5, 6 }).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(UnionTestData))]
+        [Test]
+        public void SetShouldUnion(List<int> first, List<int> second, List<int> result)
+        {
+            foreach (var item in first)
+            {
+                this.set.Add(item);
+            }
+
+            this.set.UnionWith(second);
+
+            Assert.IsTrue(this.set.SetEquals(result));
+        }
+
+        private static IEnumerable<TestCaseData> SimmetricExceptTestData()
+        {
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { }, new List<int> { }).SetCategory("Empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { }, new List<int> { 1, 2, 3 }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { 1, 2, 3 }, new List<int> { 1, 2, 3 }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }, new List<int> { }).SetCategory("Equals");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }, new List<int> { }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }, new List<int> { }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }, new List<int> { 4 }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }, new List<int> { 4 }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }, new List<int> { 3 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }, new List<int> { 3 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }, new List<int> { 3, 4 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }, new List<int> { 1, 2, 4, 5 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }, new List<int> { 1, 2, 3, 4, 5, 6 }).SetCategory("Not overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }, new List<int> { 1, 2, 3, 4, 5, 6 }).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(SimmetricExceptTestData))]
+        [Test]
+        public void SetShouldSimmetricExcept(List<int> first, List<int> second, List<int> result)
+        {
+            foreach (var item in first)
+            {
+                this.set.Add(item);
+            }
+
+            this.set.SymmetricExceptWith(second);
+
+            Assert.IsTrue(this.set.SetEquals(result));
+        }
+
+        private static IEnumerable<TestCaseData> ExceptTestData()
+        {
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { }, new List<int> { }).SetCategory("Empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { }, new List<int> { 1, 2, 3 }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { 1, 2, 3 }, new List<int> { }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }, new List<int> { }).SetCategory("Equals");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }, new List<int> { }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }, new List<int> { }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }, new List<int> { }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }, new List<int> { }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }, new List<int> { 3 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }, new List<int> { 3 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }, new List<int> { 3 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }, new List<int> { 1, 2 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }, new List<int> { 1, 2, 3 }).SetCategory("Not overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }, new List<int> { 1, 2, 3 }).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(ExceptTestData))]
+        [Test]
+        public void SetShouldExcept(List<int> first, List<int> second, List<int> result)
+        {
+            foreach (var item in first)
+            {
+                this.set.Add(item);
+            }
+
+            this.set.ExceptWith(second);
+
+            Assert.IsTrue(this.set.SetEquals(result));
+        }
+
+        private static IEnumerable<TestCaseData> IntersectTestData()
+        {
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { }, new List<int> { }).SetCategory("Empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { }, new List<int> { }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { }, new List<int> { 1, 2, 3 }, new List<int> { }).SetCategory("Empty and not empty");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3 }, new List<int> { 1, 2, 3 }).SetCategory("Equals");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 2, 1 }, new List<int> { 1, 2, 3 }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 3, 2, 1 }, new List<int> { 2, 1, 3 }, new List<int> { 1, 2, 3 }).SetCategory("Equals but different order");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 2, 3, 4 }, new List<int> { 1, 2, 3 }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 3, 2, 1 }, new List<int> { 1, 2, 3 }).SetCategory("Proper subset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3, 4 }, new List<int> { 1, 4, 2 }, new List<int> { 1, 2, 4 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 4, 3, 2, 1 }, new List<int> { 1, 4, 2 }, new List<int> { 1, 2, 4 }).SetCategory("Proper superset");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 1, 4, 2 }, new List<int> { 1, 2 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 3, 4, 5 }, new List<int> { 3 }).SetCategory("Overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 2, 3 }, new List<int> { 4, 5, 6 }, new List<int> { }).SetCategory("Not overlaps");
+            yield return new TestCaseData(
+                new List<int>() { 1, 3, 2 }, new List<int> { 6, 5, 4 }, new List<int> { }).SetCategory("Not overlaps");
+        }
+
+        [TestCaseSource(nameof(IntersectTestData))]
+        [Test]
+        public void SetShouldIntersect(List<int> first, List<int> second, List<int> result)
+        {
+            foreach (var item in first)
+            {
+                this.set.Add(item);
+            }
+
+            this.set.IntersectWith(second);
+
+            Assert.IsTrue(this.set.SetEquals(result));
         }
 
         private class DefaultComparer<T> : IComparer<T>
