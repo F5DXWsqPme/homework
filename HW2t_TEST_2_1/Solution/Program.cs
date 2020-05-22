@@ -17,13 +17,13 @@ namespace Solution
         [STAThread]
         public static void Main(string[] arguments)
         {
-           // if (arguments.Length == 2 && int.TryParse(arguments[1], out int fieldSize))
+            if (arguments.Length == 1 && int.TryParse(arguments[0], out int fieldSize))
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainWindow(/*fieldSize*/2));
+                Application.Run(new MainWindow(fieldSize));
             }
-            //else
+            else
             {
                 MessageBox.Show("Wrong arguments", "Error");
             }

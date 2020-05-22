@@ -60,6 +60,20 @@ namespace Solution.Tests
 
             Assert.AreEqual(changes.Length, 3);
             Assert.AreEqual(isWin2, false);
+
+            foreach (var change in changes)
+            {
+                if (change.cellIndex == 0)
+                {
+                    Assert.IsTrue(
+                        change.changedCell.State == GameState.CellState.Active ||
+                        change.changedCell.State == GameState.CellState.Guessed);
+                }
+                else if (change.cellIndex == 2)
+                {
+                    Assert.IsTrue(change.changedCell.State == GameState.CellState.Pressed);
+                }
+            }
         }
     }
 }
