@@ -5,7 +5,7 @@ namespace Solution
     /// <summary>
     /// Class with main function.
     /// </summary>
-    public class Program
+    internal class Program
     {
         /// <summary>
         /// Main function.
@@ -13,7 +13,6 @@ namespace Solution
         /// <param name="arguments">Arguments array.</param>
         private static void Main(string[] arguments)
         {
-            Console.WriteLine("Hello World!");
         }
     }
 }
