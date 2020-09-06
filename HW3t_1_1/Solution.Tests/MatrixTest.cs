@@ -77,8 +77,8 @@ namespace Solution.Tests
         {
             Matrix.UseMultithreading = useMultithreading;
 
-            var firstMatrix = new Matrix(15, 7);
-            var secondMatrix = new Matrix(7, 14);
+            var firstMatrix = new Matrix(7, 7);
+            var secondMatrix = new Matrix(7, 8);
 
             Assert.Throws<ArgumentException>(() =>
             {
