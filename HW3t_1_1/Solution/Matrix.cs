@@ -46,28 +46,46 @@ namespace Solution
         /// <returns>Result matrix.</returns>
         public static Matrix operator *(Matrix first, Matrix second)
         {
-            Matrix answer;
-
             if (first.Fields.GetLength(1) != second.Fields.GetLength(0))
             {
                 throw new ArgumentException("Matrix multiplication imposible");
             }
 
-            answer = new Matrix(second.Fields.GetLength(1), first.Fields.GetLength(0));
+            var answer = new Matrix(second.Fields.GetLength(1), first.Fields.GetLength(0));
+            var transposedSecond = second.GetTranspose();
 
             if (UseMultithreading && Environment.ProcessorCount > 1)
             {
-                MultiplyMatrixWithMultithreading(first, second, answer);
+                MultiplyMatrixWithMultithreading(first, transposedSecond, answer);
             }
             else
             {
-                MultiplyMatrixWithoutMultithreading(first, second, answer);
+                MultiplyMatrixWithoutMultithreading(first, transposedSecond, answer);
             }
 
             return answer;
         }
 
-        private static void MultiplyMatrixWithMultithreading(Matrix first, Matrix second, Matrix answer)
+        /// <summary>
+        /// Gets transpose matrix.
+        /// </summary>
+        /// <returns>Transpose matrix.</returns>
+        public Matrix GetTranspose()
+        {
+            var result = new Matrix(this.Fields.GetLength(0), this.Fields.GetLength(1));
+
+            for (int row = 0; row < this.Fields.GetLength(0); row++)
+            {
+                for (int column = 0; column < this.Fields.GetLength(1); column++)
+                {
+                    result.Fields[column, row] = this.Fields[row, column];
+                }
+            }
+
+            return result;
+        }
+
+        private static void MultiplyMatrixWithMultithreading(Matrix first, Matrix transposedSecond, Matrix answer)
         {
             int numberOfUsedThreads = Environment.ProcessorCount - 1;
             Thread[] threads = new Thread[numberOfUsedThreads];
@@ -82,7 +100,7 @@ namespace Solution
                         int row = index / answer.Fields.GetLength(1);
                         int column = index % answer.Fields.GetLength(1);
 
-                        answer.Fields[row, column] = MultiplyRowByColumn(row, first, column, second);
+                        answer.Fields[row, column] = MultiplyRowByRow(row, first, column, transposedSecond);
                     }
                 });
             }
@@ -98,24 +116,24 @@ namespace Solution
             }
         }
 
-        private static void MultiplyMatrixWithoutMultithreading(Matrix first, Matrix second, Matrix answer)
+        private static void MultiplyMatrixWithoutMultithreading(Matrix first, Matrix transposedSecond, Matrix answer)
         {
             for (int row = 0; row < answer.Fields.GetLength(0); row++)
             {
                 for (int column = 0; column < answer.Fields.GetLength(1); column++)
                 {
-                    answer.Fields[row, column] = MultiplyRowByColumn(row, first, column, second);
+                    answer.Fields[row, column] = MultiplyRowByRow(row, first, column, transposedSecond);
                 }
             }
         }
 
-        private static int MultiplyRowByColumn(int row, Matrix first, int column, Matrix second)
+        private static int MultiplyRowByRow(int row, Matrix first, int column, Matrix second)
         {
             int result = 0;
 
             for (int i = 0; i < first.Fields.GetLength(1); i++)
             {
-                result += first.Fields[row, i] * second.Fields[i, column];
+                result += first.Fields[row, i] * second.Fields[column, i];
             }
 
             return result;
