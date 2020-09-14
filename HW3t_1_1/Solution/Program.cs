@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Solution
@@ -23,7 +23,7 @@ namespace Solution
                 return;
             }
 
-            for (int i = 0; i < 2; i++)
+            for (var i = 0; i < 2; i++)
             {
                 (bool success, Matrix matrix) = LoadMatrix(arguments[i]);
 
@@ -66,21 +66,23 @@ namespace Solution
         private static void PrintPerformance(Action function)
         {
             double minimalTime = 0.2;
-            int multiplyer = 10;
+            var multiplyer = 10;
             long numberOfIterations = 1;
             TimeSpan deltaTime;
 
             do
             {
-                DateTime startTime = DateTime.Now;
+                Stopwatch stopWatch = new Stopwatch();
 
-                for (int i = 0; i < numberOfIterations; i++)
+                stopWatch.Start();
+
+                for (var i = 0; i < numberOfIterations; i++)
                 {
                     function();
                 }
 
-                DateTime endTime = DateTime.Now;
-                deltaTime = endTime - startTime;
+                stopWatch.Stop();
+                deltaTime = stopWatch.Elapsed;
                 numberOfIterations *= multiplyer;
             }
             while (deltaTime.TotalSeconds < minimalTime);
@@ -162,14 +164,14 @@ namespace Solution
                     return (false, null);
                 }
 
-                for (int currentPosition = 0;
+                for (var currentPosition = 0;
                     currentPosition < matrix.Fields.Length;
                     currentPosition++)
                 {
                     if (int.TryParse(numbersInString[currentPosition + 2], out int value))
                     {
-                        int row = currentPosition / matrix.Fields.GetLength(1);
-                        int column = currentPosition / matrix.Fields.GetLength(1);
+                        var row = currentPosition / matrix.Fields.GetLength(1);
+                        var column = currentPosition / matrix.Fields.GetLength(1);
 
                         matrix.Fields[row, column] = value;
                     }

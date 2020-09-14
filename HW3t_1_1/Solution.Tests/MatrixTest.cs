@@ -6,11 +6,6 @@ namespace Solution.Tests
 {
     public class MatrixTest
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [TestCaseSource(nameof(UseMultithreadingData))]
         [Test]
         public void MatrixShouldCreate(bool useMultithreading)
