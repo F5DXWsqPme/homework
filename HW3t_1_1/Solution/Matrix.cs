@@ -84,7 +84,7 @@ namespace Solution
         private static void MultiplyMatrixWithMultithreading(Matrix first, Matrix second, Matrix answer)
         {
             var numberOfUsedThreads = Environment.ProcessorCount - 1;
-            Thread[] threads = new Thread[numberOfUsedThreads];
+            var threads = new Thread[numberOfUsedThreads];
 
             for (var i = 0; i < threads.Length; i++)
             {
