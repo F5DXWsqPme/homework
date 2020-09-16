@@ -11,7 +11,6 @@
     {
         private Func<T> function;
         private ManualResetEventSlim dataReadyEvent;
-        private volatile bool dataReady;
         private volatile bool evaluationsStarted;
         private T data;
         private object syncronizationObject;
@@ -22,7 +21,6 @@
         /// <param name="function">Function for evaluations.</param>
         public LazyWithMultithreading(Func<T> function)
         {
-            this.dataReady = false;
             this.evaluationsStarted = false;
             this.syncronizationObject = new object();
 
@@ -45,16 +43,13 @@
                     {
                         this.evaluationsStarted = true;
                         this.data = this.function();
-                        this.dataReady = true;
+                        this.function = null;
                         this.dataReadyEvent.Set();
                     }
                 }
             }
 
-            if (!this.dataReady)
-            {
-                this.dataReadyEvent.Wait();
-            }
+            this.dataReadyEvent.Wait();
 
             return this.data;
         }

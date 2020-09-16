@@ -13,10 +13,8 @@
         /// <typeparam name="T">Type of evaluations result.</typeparam>
         /// <param name="supplier">Evaluations function.</param>
         /// <returns>Lazy evaluator.</returns>
-        public static ILazy<T> CreateOneThreadLazy<T>(Func<T> supplier)
-        {
-            return new LazyOneThread<T>(supplier);
-        }
+        public static ILazy<T> CreateOneThreadLazy<T>(Func<T> supplier) =>
+            new LazyOneThread<T>(supplier);
 
         /// <summary>
         /// Create lazy evaluator (multithreading).
@@ -24,9 +22,7 @@
         /// <typeparam name="T">Type of evaluations result.</typeparam>
         /// <param name="supplier">Evaluations function.</param>
         /// <returns>Lazy evaluator.</returns>
-        public static ILazy<T> CreateMultithreadingLazy<T>(Func<T> supplier)
-        {
-            return new LazyWithMultithreading<T>(supplier);
-        }
+        public static ILazy<T> CreateMultithreadingLazy<T>(Func<T> supplier) =>
+            new LazyWithMultithreading<T>(supplier);
     }
 }
