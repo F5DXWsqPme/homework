@@ -15,13 +15,13 @@ namespace Solution
         /// <param name="arguments">Arguments array.</param>
         private static void Main(string[] arguments)
         {
-            Matrix[] matrices = new Matrix[2];
-
             if (arguments.Length != 2)
             {
                 Console.WriteLine("Wrong arguments");
                 return;
             }
+
+            Matrix[] matrices = new Matrix[2];
 
             for (var i = 0; i < 2; i++)
             {
@@ -33,8 +33,12 @@ namespace Solution
                 }
                 else
                 {
-                    Console.WriteLine("Wrong arguments");
-                    return;
+                    Console.WriteLine("Wrong arguments, generating matrix");
+
+                    var matrixHeightAndWidth = 500;
+
+                    matrices[i] = new Matrix(matrixHeightAndWidth, matrixHeightAndWidth);
+                    matrices[i].FillRandom();
                 }
             }
 
@@ -44,88 +48,57 @@ namespace Solution
                 return;
             }
 
-            Console.Write("No operations: ");
-            PrintPerformance(() =>
-            {
-            });
+            var numberOfIterations = 20;
 
             Console.Write("Without multithreading: ");
-            PrintPerformance(() =>
-            {
-                Matrix result = matrices[0] * matrices[1];
-            });
+            PrintPerformance(
+                () =>
+                {
+                    Matrix result = matrices[0] * matrices[1];
+                },
+                numberOfIterations);
 
             Matrix.UseMultithreading = true;
-            Console.Write("With multithreading: ");
-            PrintPerformance(() =>
-            {
-                Matrix result = matrices[0] * matrices[1];
-            });
+            Console.Write("With multithreading:    ");
+            PrintPerformance(
+                () =>
+                {
+                    Matrix result = matrices[0] * matrices[1];
+                },
+                numberOfIterations);
         }
 
-        private static void PrintPerformance(Action function)
+        private static void PrintPerformance(Action function, int numberOfIterations)
         {
-            double minimalTime = 0.2;
-            var multiplyer = 10;
-            long numberOfIterations = 1;
-            TimeSpan deltaTime;
+            double meanTimeValue = 0;
+            double meanSquareTimeValue = 0;
 
-            do
+            for (var j = 0; j < numberOfIterations; j++)
             {
                 Stopwatch stopWatch = new Stopwatch();
 
                 stopWatch.Start();
 
-                for (var i = 0; i < numberOfIterations; i++)
-                {
-                    function();
-                }
+                function();
 
                 stopWatch.Stop();
-                deltaTime = stopWatch.Elapsed;
-                numberOfIterations *= multiplyer;
-            }
-            while (deltaTime.TotalSeconds < minimalTime);
 
-            numberOfIterations /= multiplyer;
+                var deltaTime = stopWatch.Elapsed;
 
-            double nanosecondsRate = 1e9;
-            double microsecondsRate = 1e6;
-            double milisecondsRate = 1e3;
-
-            double maximalNumber = 1e3;
-
-            double result = deltaTime.TotalSeconds * (nanosecondsRate / numberOfIterations);
-
-            if (result < maximalNumber)
-            {
-                Console.Write(result.ToString("F"));
-                Console.WriteLine(" ns");
-                return;
+                meanTimeValue += deltaTime.TotalSeconds;
+                meanSquareTimeValue += Math.Pow(deltaTime.TotalSeconds, 2);
             }
 
-            result = deltaTime.TotalSeconds * (microsecondsRate / numberOfIterations);
+            meanTimeValue /= numberOfIterations;
+            meanSquareTimeValue /= numberOfIterations;
 
-            if (result < maximalNumber)
-            {
-                Console.Write(result.ToString("F"));
-                Console.WriteLine(" mcs");
-                return;
-            }
+            var dispersion = meanSquareTimeValue - Math.Pow(meanTimeValue, 2);
 
-            result = deltaTime.TotalSeconds * (milisecondsRate / numberOfIterations);
-
-            if (result < maximalNumber)
-            {
-                Console.Write(result.ToString("F"));
-                Console.WriteLine(" ms");
-                return;
-            }
-
-            result = deltaTime.TotalSeconds * numberOfIterations;
-
-            Console.Write(result.ToString("F"));
-            Console.WriteLine(" s");
+            Console.Write("M(T)=");
+            Console.Write(meanTimeValue.ToString("F4"));
+            Console.Write("\tD(T)=");
+            Console.Write(dispersion.ToString("F6"));
+            Console.WriteLine($"\tN={numberOfIterations}");
         }
 
         private static (bool, Matrix) LoadMatrix(string fileName)

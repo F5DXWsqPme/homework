@@ -29,12 +29,12 @@ namespace Solution
         }
 
         /// <summary>
-        /// Gets or sets matrix fields.
+        /// Gets matrix fields.
         /// </summary>
         public int[,] Fields
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
@@ -52,40 +52,36 @@ namespace Solution
             }
 
             var answer = new Matrix(second.Fields.GetLength(1), first.Fields.GetLength(0));
-            var transposedSecond = second.GetTranspose();
 
             if (UseMultithreading && Environment.ProcessorCount > 1)
             {
-                MultiplyMatrixWithMultithreading(first, transposedSecond, answer);
+                MultiplyMatrixWithMultithreading(first, second, answer);
             }
             else
             {
-                MultiplyMatrixWithoutMultithreading(first, transposedSecond, answer);
+                MultiplyMatrixWithoutMultithreading(first, second, answer);
             }
 
             return answer;
         }
 
         /// <summary>
-        /// Gets transpose matrix.
+        /// Fill matrix with random numbers.
         /// </summary>
-        /// <returns>Transpose matrix.</returns>
-        public Matrix GetTranspose()
+        public void FillRandom()
         {
-            var result = new Matrix(this.Fields.GetLength(0), this.Fields.GetLength(1));
+            var random = new Random();
 
             for (var row = 0; row < this.Fields.GetLength(0); row++)
             {
                 for (var column = 0; column < this.Fields.GetLength(1); column++)
                 {
-                    result.Fields[column, row] = this.Fields[row, column];
+                    this.Fields[row, column] = random.Next();
                 }
             }
-
-            return result;
         }
 
-        private static void MultiplyMatrixWithMultithreading(Matrix first, Matrix transposedSecond, Matrix answer)
+        private static void MultiplyMatrixWithMultithreading(Matrix first, Matrix second, Matrix answer)
         {
             var numberOfUsedThreads = Environment.ProcessorCount - 1;
             Thread[] threads = new Thread[numberOfUsedThreads];
@@ -100,7 +96,7 @@ namespace Solution
                         var row = index / answer.Fields.GetLength(1);
                         var column = index % answer.Fields.GetLength(1);
 
-                        answer.Fields[row, column] = MultiplyRowByRow(row, first, column, transposedSecond);
+                        answer.Fields[row, column] = MultiplyRowByColumn(row, first, column, second);
                     }
                 });
             }
@@ -116,24 +112,24 @@ namespace Solution
             }
         }
 
-        private static void MultiplyMatrixWithoutMultithreading(Matrix first, Matrix transposedSecond, Matrix answer)
+        private static void MultiplyMatrixWithoutMultithreading(Matrix first, Matrix second, Matrix answer)
         {
             for (var row = 0; row < answer.Fields.GetLength(0); row++)
             {
                 for (var column = 0; column < answer.Fields.GetLength(1); column++)
                 {
-                    answer.Fields[row, column] = MultiplyRowByRow(row, first, column, transposedSecond);
+                    answer.Fields[row, column] = MultiplyRowByColumn(row, first, column, second);
                 }
             }
         }
 
-        private static int MultiplyRowByRow(int row, Matrix first, int column, Matrix second)
+        private static int MultiplyRowByColumn(int row, Matrix first, int column, Matrix second)
         {
             var result = 0;
 
             for (var i = 0; i < first.Fields.GetLength(1); i++)
             {
-                result += first.Fields[row, i] * second.Fields[column, i];
+                result += first.Fields[row, i] * second.Fields[i, column];
             }
 
             return result;
