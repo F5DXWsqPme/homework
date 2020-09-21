@@ -56,6 +56,7 @@
         /// <typeparam name="TNewResult">New function result type.</typeparam>
         /// <param name="function">Function for evaluations.</param>
         /// <returns>New task.</returns>
+        /// <exception cref="InvalidOperationException">Throws when thread pool closed and data ready.</exception>
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> function)
         {
             lock (this.finishTaskLockObject)

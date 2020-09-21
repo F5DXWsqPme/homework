@@ -4,6 +4,7 @@ namespace Solution.Tests
     using System.Diagnostics;
     using System.Threading;
     using NUnit.Framework;
+    using System;
 
     public class MyThreadPoolTests
     {
@@ -218,6 +219,124 @@ namespace Solution.Tests
             {
                 Assert.AreEqual(i + 2, tasks[i].Result);
             }
+        }
+
+        [TestCaseSource(nameof(NumberOfThreadsData))]
+        [Test]
+        public void ThreadPoolShouldContinueBeforeDispose(int numberOfThreads)
+        {
+            var tasks = new List<IMyTask<int>>();
+            int numberOfTasks = 30;
+
+            {
+                using var threadPool = new MyThreadPool(numberOfThreads);
+
+                for (int i = 0; i < numberOfTasks; i++)
+                {
+                    int index = i;
+
+                    var task = threadPool.Submit(() => index);
+                    tasks.Add(task.ContinueWith(x =>
+                    {
+                        Thread.Sleep(30);
+                        return x + 1;
+                    }));
+                }
+            }
+
+            for (int i = 0; i < numberOfTasks; i++)
+            {
+                Assert.AreEqual(i + 1, tasks[i].Result);
+            }
+        }
+
+        [TestCaseSource(nameof(NumberOfThreadsData))]
+        [Test]
+        public void ThreadPoolShouldReturnStatus(int numberOfThreads)
+        {
+            using var threadPool = new MyThreadPool(numberOfThreads);
+
+            var task = threadPool.Submit(() =>
+            {
+                Thread.Sleep(50);
+                return 1;
+            });
+            var secondTask = task.ContinueWith(x =>
+            {
+                Thread.Sleep(50);
+                return x + 1;
+            });
+
+            Assert.IsFalse(task.IsCompleted());
+            Assert.IsFalse(secondTask.IsCompleted());
+
+            Thread.Sleep(30);
+
+            Assert.IsFalse(task.IsCompleted());
+            Assert.IsFalse(secondTask.IsCompleted());
+
+            Thread.Sleep(30);
+
+            Assert.IsTrue(task.IsCompleted());
+            Assert.IsFalse(secondTask.IsCompleted());
+
+            Thread.Sleep(50);
+
+            Assert.IsTrue(task.IsCompleted());
+            Assert.IsTrue(secondTask.IsCompleted());
+        }
+
+        [TestCaseSource(nameof(NumberOfThreadsData))]
+        [Test]
+        public void ThreadPoolShouldThrowInResult(int numberOfThreads)
+        {
+            using var threadPool = new MyThreadPool(numberOfThreads);
+
+            var task = threadPool.Submit<int>(() =>
+            {
+                throw new ArgumentException();
+            });
+
+            var exception = Assert.Throws<AggregateException>(() =>
+            {
+                var result = task.Result;
+            });
+
+            Assert.That(exception.InnerException, Is.TypeOf<ArgumentException>());
+        }
+
+        [TestCaseSource(nameof(NumberOfThreadsData))]
+        [Test]
+        public void ThreadPoolShouldThrowInSubmit(int numberOfThreads)
+        {
+            var threadPool = new MyThreadPool(numberOfThreads);
+
+            threadPool.Shutdown();
+
+            Thread.Sleep(5);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                threadPool.Submit(() => 5);
+            });
+        }
+
+        [TestCaseSource(nameof(NumberOfThreadsData))]
+        [Test]
+        public void ThreadPoolShouldThrowInContinueWith(int numberOfThreads)
+        {
+            var threadPool = new MyThreadPool(numberOfThreads);
+
+            var task = threadPool.Submit(() => 5);
+
+            threadPool.Shutdown();
+
+            Thread.Sleep(5);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                task.ContinueWith((x) => 5);
+            });
         }
 
         private static IEnumerable<TestCaseData> NumberOfThreadsData()
