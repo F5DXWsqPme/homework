@@ -274,7 +274,7 @@ namespace Solution.Tests
             Assert.IsFalse(task.IsCompleted());
             Assert.IsFalse(secondTask.IsCompleted());
 
-            Thread.Sleep(30);
+            Thread.Sleep(40);
 
             Assert.IsTrue(task.IsCompleted());
             Assert.IsFalse(secondTask.IsCompleted());
