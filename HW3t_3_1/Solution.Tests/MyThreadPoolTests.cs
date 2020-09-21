@@ -227,7 +227,6 @@ namespace Solution.Tests
         {
             var tasks = new List<IMyTask<int>>();
             int numberOfTasks = 30;
-
             {
                 using var threadPool = new MyThreadPool(numberOfThreads);
 
