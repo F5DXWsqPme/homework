@@ -8,15 +8,16 @@
     /// Thread pool task interface implementation.
     /// </summary>
     /// <typeparam name="TResult">Task result type.</typeparam>
-    internal class MyTask<TResult> : IMyTask<TResult>, IRunnableTask
+    internal class MyTask<TResult> : IMyTask<TResult>
     {
         private object continueTasksLockObject = new object();
         private object finishTaskLockObject = new object();
-        private Queue<IRunnableTask> continueTasks = new Queue<IRunnableTask>();
+        private Queue<Action> continueTasks = new Queue<Action>();
         private volatile bool dataReady;
         private ManualResetEventSlim dataReadyEvent = new ManualResetEventSlim();
         private TResult result;
         private AggregateException runException = null;
+        private InvalidOperationException invalidOperationException = null;
         private MyThreadPool hostThreadPool;
         private Func<TResult> function;
 
@@ -35,11 +36,17 @@
         /// Gets task result.
         /// </summary>
         /// <exception cref="AggregateException">Throws when task function throw exception.</exception>
+        /// <exception cref="InvalidOperationException">Throws when task was invalidated.</exception>
         public TResult Result
         {
             get
             {
                 this.dataReadyEvent.Wait();
+
+                if (this.invalidOperationException != null)
+                {
+                    throw this.invalidOperationException;
+                }
 
                 if (this.runException != null)
                 {
@@ -56,9 +63,13 @@
         /// <typeparam name="TNewResult">New function result type.</typeparam>
         /// <param name="function">Function for evaluations.</param>
         /// <returns>New task.</returns>
-        /// <exception cref="InvalidOperationException">Throws when thread pool closed and data ready.</exception>
         public IMyTask<TNewResult> ContinueWith<TNewResult>(Func<TResult, TNewResult> function)
         {
+            if (this.dataReady)
+            {
+                return this.hostThreadPool.Submit(() => function(this.Result));
+            }
+
             lock (this.finishTaskLockObject)
             {
                 if (this.dataReady)
@@ -67,10 +78,14 @@
                 }
 
                 var newTask = new MyTask<TNewResult>(this.hostThreadPool, () => function(this.Result));
+                Action action = () =>
+                {
+                    newTask.Run();
+                };
 
                 lock (this.continueTasksLockObject)
                 {
-                    this.continueTasks.Enqueue(newTask);
+                    this.continueTasks.Enqueue(action);
                 }
 
                 return newTask;
@@ -98,7 +113,6 @@
                 this.runException = new AggregateException(exception);
             }
 
-            this.dataReadyEvent.Set();
             this.function = null;
 
             lock (this.finishTaskLockObject)
@@ -106,23 +120,44 @@
                 this.dataReady = true;
             }
 
+            this.dataReadyEvent.Set();
+
             foreach (var task in this.GetContinueTasks())
             {
-                task.Run();
+                task();
             }
         }
 
-        private IEnumerable<IRunnableTask> GetContinueTasks()
+        /// <summary>
+        /// Set task invalid.
+        /// </summary>
+        public void InvalidateTask()
+        {
+            this.invalidOperationException = new InvalidOperationException("Task invalidated.");
+
+            this.function = null;
+            this.hostThreadPool = null;
+            this.runException = null;
+
+            lock (this.finishTaskLockObject)
+            {
+                this.dataReady = true;
+            }
+
+            this.dataReadyEvent.Set();
+        }
+
+        private IEnumerable<Action> GetContinueTasks()
         {
             while (true)
             {
-                IRunnableTask runnableTask;
+                Action action;
 
                 lock (this.continueTasksLockObject)
                 {
                     if (this.continueTasks.Count > 0)
                     {
-                        runnableTask = this.continueTasks.Dequeue();
+                        action = this.continueTasks.Dequeue();
                     }
                     else
                     {
@@ -130,7 +165,7 @@
                     }
                 }
 
-                yield return runnableTask;
+                yield return action;
             }
         }
     }

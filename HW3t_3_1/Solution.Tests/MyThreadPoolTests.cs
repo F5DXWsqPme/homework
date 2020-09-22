@@ -2,8 +2,8 @@ namespace Solution.Tests
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Threading;
+    using System.Threading.Tasks;
     using NUnit.Framework;
 
     public class MyThreadPoolTests
@@ -39,9 +39,9 @@ namespace Solution.Tests
         public void ThreadPoolShouldEvaluateBeforeDispose(int numberOfThreads)
         {
             IMyTask<int> task;
-            {
-                using var threadPool = new MyThreadPool(numberOfThreads);
 
+            using (var threadPool = new MyThreadPool(numberOfThreads))
+            {
                 task = threadPool.Submit(() =>
                 {
                     Thread.Sleep(5);
@@ -104,9 +104,9 @@ namespace Solution.Tests
         {
             var tasks = new List<IMyTask<int>>();
             int numberOfTasks = 30;
-            {
-                using var threadPool = new MyThreadPool(numberOfThreads);
 
+            using (var threadPool = new MyThreadPool(numberOfThreads))
+            {
                 for (int i = 0; i < numberOfTasks; i++)
                 {
                     int index = i;
@@ -131,34 +131,33 @@ namespace Solution.Tests
         {
             using var threadPool = new MyThreadPool(numberOfThreads);
             var tasks = new List<IMyTask<int>>();
-            int numberOfTasks = 5 * numberOfThreads;
-            int sleepTime = 30;
+            var stopEvent = new ManualResetEventSlim();
+            var semaphore = new SemaphoreSlim(0, numberOfThreads);
 
-            var stopwatch = new Stopwatch();
-
-            stopwatch.Start();
-
-            for (int i = 0; i < numberOfTasks; i++)
+            for (int i = 0; i < numberOfThreads; i++)
             {
                 tasks.Add(threadPool.Submit(() =>
                 {
-                    Thread.Sleep(sleepTime);
+                    semaphore.Release();
+                    stopEvent.Wait();
                     return 0;
                 }));
             }
 
-            for (int i = 0; i < numberOfTasks; i++)
+            var deadlockCheckTask = Task.Run(() =>
             {
-                var result = tasks[i].Result;
-            }
+                // Deadlock if threads less than numberOfThreads
+                for (int i = 0; i < numberOfThreads; i++)
+                {
+                    semaphore.Wait();
+                }
+            });
+            var timeoutTask = Task.Delay(3000);
+            var completedTask = Task.WhenAny(deadlockCheckTask, timeoutTask).Result;
 
-            stopwatch.Stop();
+            stopEvent.Set();
 
-            int estimatedMilliseconds = numberOfTasks * sleepTime / numberOfThreads;
-            int threshold = estimatedMilliseconds / 3;
-
-            Assert.Greater(estimatedMilliseconds + threshold, stopwatch.ElapsedMilliseconds);
-            Assert.Less(estimatedMilliseconds - threshold, stopwatch.ElapsedMilliseconds);
+            Assert.AreEqual(deadlockCheckTask, completedTask);
         }
 
         [TestCaseSource(nameof(NumberOfThreadsData))]
@@ -227,9 +226,9 @@ namespace Solution.Tests
         {
             var tasks = new List<IMyTask<int>>();
             int numberOfTasks = 30;
-            {
-                using var threadPool = new MyThreadPool(numberOfThreads);
 
+            using (var threadPool = new MyThreadPool(numberOfThreads))
+            {
                 for (int i = 0; i < numberOfTasks; i++)
                 {
                     int index = i;
@@ -314,9 +313,11 @@ namespace Solution.Tests
 
             Thread.Sleep(5);
 
+            var task = threadPool.Submit(() => 5);
+
             Assert.Throws<InvalidOperationException>(() =>
             {
-                threadPool.Submit(() => 5);
+                var result = task.Result;
             });
         }
 
@@ -332,9 +333,11 @@ namespace Solution.Tests
 
             Thread.Sleep(5);
 
+            var invalidTask = task.ContinueWith((x) => 5);
+
             Assert.Throws<InvalidOperationException>(() =>
             {
-                task.ContinueWith((x) => 5);
+                var result = invalidTask.Result;
             });
         }
 

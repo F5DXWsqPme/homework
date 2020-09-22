@@ -12,7 +12,8 @@
         private Thread[] threads;
         private CancellationTokenSource cancellationTokenSource;
         private CancellationToken cancellationToken;
-        private SynchronizedQueue<IRunnableTask> tasksForRunning;
+        private SynchronizedQueue<Action> tasksForRunning;
+        private object shutdownLockObject = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MyThreadPool"/> class.
@@ -22,7 +23,7 @@
         {
             this.cancellationTokenSource = new CancellationTokenSource();
             this.cancellationToken = this.cancellationTokenSource.Token;
-            this.tasksForRunning = new SynchronizedQueue<IRunnableTask>();
+            this.tasksForRunning = new SynchronizedQueue<Action>();
 
             this.threads = new Thread[numberOfThreads];
 
@@ -32,14 +33,14 @@
                 {
                     while (true)
                     {
-                        (IRunnableTask task, bool exitFlag) = this.tasksForRunning.Dequeue();
+                        (Action task, bool exitFlag) = this.tasksForRunning.Dequeue();
 
                         if (exitFlag)
                         {
                             break;
                         }
 
-                        task.Run();
+                        task();
                     }
                 });
 
@@ -53,19 +54,39 @@
         /// <typeparam name="TResult">Task result type.</typeparam>
         /// <param name="function">Task function.</param>
         /// <returns>Created task.</returns>
-        /// <exception cref="InvalidOperationException">Throws when thread pool closed.</exception>
         public IMyTask<TResult> Submit<TResult>(Func<TResult> function)
         {
+            Func<MyTask<TResult>> getErrorTask = () =>
+            {
+                var task = new MyTask<TResult>(this, function);
+
+                task.InvalidateTask();
+
+                return task;
+            };
+
             if (this.cancellationToken.IsCancellationRequested)
             {
-                throw new InvalidOperationException("Thread pool closed.");
+                return getErrorTask();
             }
 
-            var task = new MyTask<TResult>(this, function);
+            lock (this.shutdownLockObject)
+            {
+                if (this.cancellationToken.IsCancellationRequested)
+                {
+                    return getErrorTask();
+                }
 
-            this.tasksForRunning.Enqueue(task);
+                var task = new MyTask<TResult>(this, function);
+                Action action = () =>
+                {
+                    task.Run();
+                };
 
-            return task;
+                this.tasksForRunning.Enqueue(action);
+
+                return task;
+            }
         }
 
         /// <summary>
@@ -73,7 +94,11 @@
         /// </summary>
         public void Shutdown()
         {
-            this.cancellationTokenSource.Cancel();
+            lock (this.shutdownLockObject)
+            {
+                this.cancellationTokenSource.Cancel();
+            }
+
             this.tasksForRunning.Shutdown();
 
             foreach (var thread in this.threads)
