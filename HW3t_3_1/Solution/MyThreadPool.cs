@@ -56,25 +56,16 @@
         /// <returns>Created task.</returns>
         public IMyTask<TResult> Submit<TResult>(Func<TResult> function)
         {
-            Func<MyTask<TResult>> getErrorTask = () =>
-            {
-                var task = new MyTask<TResult>(this, function);
-
-                task.InvalidateTask();
-
-                return task;
-            };
-
             if (this.cancellationToken.IsCancellationRequested)
             {
-                return getErrorTask();
+                throw new InvalidOperationException("Thread pool closed.");
             }
 
             lock (this.shutdownLockObject)
             {
                 if (this.cancellationToken.IsCancellationRequested)
                 {
-                    return getErrorTask();
+                    throw new InvalidOperationException("Thread pool closed.");
                 }
 
                 var task = new MyTask<TResult>(this, function);
@@ -86,6 +77,35 @@
                 this.tasksForRunning.Enqueue(action);
 
                 return task;
+            }
+        }
+
+        /// <summary>
+        /// Add new continue task method.
+        /// </summary>
+        /// <param name="newTask">New continue task.</param>
+        public void SubmitContinueTask(IContinueTask newTask)
+        {
+            if (this.cancellationToken.IsCancellationRequested)
+            {
+                newTask.InvalidateTask();
+                return;
+            }
+
+            lock (this.shutdownLockObject)
+            {
+                if (this.cancellationToken.IsCancellationRequested)
+                {
+                    newTask.InvalidateTask();
+                    return;
+                }
+
+                Action action = () =>
+                {
+                    newTask.Run();
+                };
+
+                this.tasksForRunning.Enqueue(action);
             }
         }
 

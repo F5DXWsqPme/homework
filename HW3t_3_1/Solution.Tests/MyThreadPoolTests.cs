@@ -226,6 +226,7 @@ namespace Solution.Tests
         {
             var tasks = new List<IMyTask<int>>();
             int numberOfTasks = 30;
+            var semaphore = new SemaphoreSlim(0, numberOfThreads);
 
             using (var threadPool = new MyThreadPool(numberOfThreads))
             {
@@ -233,12 +234,22 @@ namespace Solution.Tests
                 {
                     int index = i;
 
-                    var task = threadPool.Submit(() => index);
+                    var task = threadPool.Submit(() =>
+                    {
+                        return index;
+                    });
+
                     tasks.Add(task.ContinueWith(x =>
                     {
+                        semaphore.Release();
                         Thread.Sleep(30);
                         return x + 1;
                     }));
+                }
+
+                for (int i = 0; i < numberOfTasks; i++)
+                {
+                    semaphore.Wait();
                 }
             }
 
@@ -313,11 +324,9 @@ namespace Solution.Tests
 
             Thread.Sleep(5);
 
-            var task = threadPool.Submit(() => 5);
-
             Assert.Throws<InvalidOperationException>(() =>
             {
-                var result = task.Result;
+                var task = threadPool.Submit(() => 5);
             });
         }
 
@@ -333,10 +342,9 @@ namespace Solution.Tests
 
             Thread.Sleep(5);
 
-            var invalidTask = task.ContinueWith((x) => 5);
-
             Assert.Throws<InvalidOperationException>(() =>
             {
+                var invalidTask = task.ContinueWith((x) => 5);
                 var result = invalidTask.Result;
             });
         }

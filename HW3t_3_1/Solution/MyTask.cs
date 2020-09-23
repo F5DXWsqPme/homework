@@ -8,11 +8,11 @@
     /// Thread pool task interface implementation.
     /// </summary>
     /// <typeparam name="TResult">Task result type.</typeparam>
-    internal class MyTask<TResult> : IMyTask<TResult>
+    internal class MyTask<TResult> : IMyTask<TResult>, IContinueTask
     {
         private object continueTasksLockObject = new object();
         private object finishTaskLockObject = new object();
-        private Queue<Action> continueTasks = new Queue<Action>();
+        private Queue<IContinueTask> continueTasks = new Queue<IContinueTask>();
         private volatile bool dataReady;
         private ManualResetEventSlim dataReadyEvent = new ManualResetEventSlim();
         private TResult result;
@@ -78,14 +78,10 @@
                 }
 
                 var newTask = new MyTask<TNewResult>(this.hostThreadPool, () => function(this.Result));
-                Action action = () =>
-                {
-                    newTask.Run();
-                };
 
                 lock (this.continueTasksLockObject)
                 {
-                    this.continueTasks.Enqueue(action);
+                    this.continueTasks.Enqueue(newTask);
                 }
 
                 return newTask;
@@ -124,7 +120,7 @@
 
             foreach (var task in this.GetContinueTasks())
             {
-                task();
+                this.hostThreadPool.SubmitContinueTask(task);
             }
         }
 
@@ -147,17 +143,17 @@
             this.dataReadyEvent.Set();
         }
 
-        private IEnumerable<Action> GetContinueTasks()
+        private IEnumerable<IContinueTask> GetContinueTasks()
         {
             while (true)
             {
-                Action action;
+                IContinueTask task;
 
                 lock (this.continueTasksLockObject)
                 {
                     if (this.continueTasks.Count > 0)
                     {
-                        action = this.continueTasks.Dequeue();
+                        task = this.continueTasks.Dequeue();
                     }
                     else
                     {
@@ -165,7 +161,7 @@
                     }
                 }
 
-                yield return action;
+                yield return task;
             }
         }
     }
