@@ -35,9 +35,9 @@
 
             Directory.CreateDirectory(this.testDir);
 
-            Task.Run(() =>
+            Task.Run(async () =>
             {
-                this.server.Run(this.cancellationTokenSource.Token);
+                await this.server.Run(this.cancellationTokenSource.Token);
             });
         }
 

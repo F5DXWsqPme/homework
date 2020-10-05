@@ -33,7 +33,7 @@
         [Test]
         public async Task ListShouldSend1AndPath()
         {
-            string request = string.Empty;
+            var request = string.Empty;
 
             var task = Task.Run(() =>
             {
@@ -58,7 +58,7 @@
         [Test]
         public async Task GetShouldSend2AndPath()
         {
-            string request = string.Empty;
+            var request = string.Empty;
 
             var task = Task.Run(() =>
             {
@@ -162,14 +162,14 @@
         }
 
         [Test]
-        public void GetShouldThrowWhenMessageWrong()
+        public async Task GetShouldThrowWhenMessageWrong()
         {
-            Task.Run(() =>
-            {
-                var socket = this.listener.AcceptSocket();
-                var stream = new NetworkStream(socket);
-                var writer = new StreamWriter(stream) { AutoFlush = true };
+            var socket = this.listener.AcceptSocket();
+            var stream = new NetworkStream(socket);
+            var writer = new StreamWriter(stream) { AutoFlush = true };
 
+            var task = Task.Run(() =>
+            {
                 writer.WriteLine(string.Empty);
                 writer.WriteLine("file_without_size");
                 writer.WriteLine("file without size");
@@ -179,24 +179,24 @@
 
             for (int i = 0; i < 5; i++)
             {
-                var exception = Assert.ThrowsAsync<AggregateException>(async () =>
+                var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 {
                     var result = await this.client.GetRequestAsync("file");
                 });
-
-                Assert.IsTrue(exception.InnerException is InvalidOperationException);
             }
+
+            await task;
         }
 
         [Test]
-        public void ListShouldThrowWhenMessageWrong()
+        public async Task ListShouldThrowWhenMessageWrong()
         {
-            Task.Run(() =>
-            {
-                var socket = this.listener.AcceptSocket();
-                var stream = new NetworkStream(socket);
-                var writer = new StreamWriter(stream) { AutoFlush = true };
+            var socket = this.listener.AcceptSocket();
+            var stream = new NetworkStream(socket);
+            var writer = new StreamWriter(stream) { AutoFlush = true };
 
+            var task = Task.Run(() =>
+            {
                 writer.WriteLine(string.Empty);
                 writer.WriteLine("dir true");
                 writer.WriteLine("dir_true");
@@ -206,13 +206,13 @@
 
             for (int i = 0; i < 5; i++)
             {
-                var exception = Assert.ThrowsAsync<AggregateException>(async () =>
+                var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 {
                     var result = await this.client.ListRequestAsync("dir");
                 });
-
-                Assert.IsTrue(exception.InnerException is InvalidOperationException);
             }
+
+            await task;
         }
     }
 }

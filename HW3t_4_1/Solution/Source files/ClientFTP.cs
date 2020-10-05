@@ -129,11 +129,19 @@
         }
 
         /// <summary>
+        /// Close connection function.
+        /// </summary>
+        public void Close()
+        {
+            this.clientSocket.Close();
+        }
+
+        /// <summary>
         /// Dispose function.
         /// </summary>
         public void Dispose()
         {
-            this.clientSocket.Close();
+            this.Close();
         }
     }
 }

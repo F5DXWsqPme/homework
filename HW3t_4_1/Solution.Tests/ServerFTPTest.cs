@@ -44,109 +44,124 @@
         }
 
         [Test]
-        public void ListShouldReturnMinusOneEmpty()
+        public async Task ListShouldReturnMinusOneEmpty()
         {
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine("1 ");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             Assert.AreEqual("-1", Volatile.Read(ref response));
         }
 
         [Test]
-        public void GetShouldReturnMinusOneEmpty()
+        public async Task GetShouldReturnMinusOneEmpty()
         {
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine("2 ");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             Assert.AreEqual("-1", Volatile.Read(ref response));
         }
 
         [Test]
-        public void ListShouldReturnMinusOne()
+        public async Task ListShouldReturnMinusOne()
         {
             this.testDir += "/ListShouldReturnMinusOne_NotExists";
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine($"1 {this.testDir}");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             Assert.AreEqual("-1", Volatile.Read(ref response));
         }
 
         [Test]
-        public void GetShouldReturnMinusOne()
+        public async Task GetShouldReturnMinusOne()
         {
             this.testDir += "/GetShouldReturnMinusOne_NotExists";
             var filePath = $"{this.testDir}/NotExistsFile";
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine($"2 {filePath}");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             Assert.AreEqual("-1", Volatile.Read(ref response));
         }
 
         [Test]
-        public void ListShouldReturnEmpty()
+        public async Task ListShouldReturnEmpty()
         {
             this.testDir += "/ListShouldReturnEmpty";
 
             Directory.CreateDirectory(this.testDir);
 
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine($"1 {this.testDir}");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             Assert.AreEqual("0 ", Volatile.Read(ref response));
         }
 
         [Test]
-        public void GetShouldReturnEmpty()
+        public async Task GetShouldReturnEmpty()
         {
             this.testDir += "/GetShouldReturnEmpty";
             var filePath = this.testDir + "/File";
@@ -154,24 +169,27 @@
             Directory.CreateDirectory(this.testDir);
             File.Create(filePath).Close();
 
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine($"2 {filePath}");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             Assert.AreEqual("0 ", Volatile.Read(ref response));
         }
 
         [Test]
-        public void ListShouldReturnFilesAndDirectories()
+        public async Task ListShouldReturnFilesAndDirectories()
         {
             this.testDir += "/ListShouldReturnFilesAndDirectories";
 
@@ -180,18 +198,21 @@
             Directory.CreateDirectory(this.testDir + "/Dir");
             File.Create(this.testDir + "/File").Close();
 
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine($"1 {this.testDir}");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             response = Volatile.Read(ref response).Replace('\\', '/');
 
@@ -207,7 +228,7 @@
         }
 
         [Test]
-        public void GetShouldReturnFile()
+        public async Task GetShouldReturnFile()
         {
             this.testDir += "/GetShouldReturnFile";
 
@@ -220,24 +241,27 @@
                 fileStream.Write("test");
             }
 
-            string response = string.Empty;
+            var response = string.Empty;
 
-            Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 this.writer.WriteLine($"2 {filePath}");
 
                 Volatile.Write(ref response, this.reader.ReadLine());
 
                 this.cancellationTokenSource.Cancel();
+                this.client.Close();
             });
 
-            this.server.Run(this.cancellationTokenSource.Token);
+            await this.server.Run(this.cancellationTokenSource.Token);
+
+            await task;
 
             Assert.AreEqual("4 test", Volatile.Read(ref response));
         }
 
         [Test]
-        public void ServerShouldThrowWhenMessageWrong()
+        public async Task ServerShouldReturnRequestWrong()
         {
             var requests = new List<string>()
             {
@@ -249,37 +273,25 @@
                 "2",
             };
 
+            var task = Task.Run(async () =>
+            {
+                await this.server.Run(this.cancellationTokenSource.Token);
+            });
+
             for (int i = 0; i < requests.Count; i++)
             {
                 this.writer.WriteLine(requests[i]);
-
-                var testTask = Task.Run(() =>
-                {
-                    var exception = Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                    {
-                        await this.server.Run(this.cancellationTokenSource.Token);
-                    });
-
-                    //var exception = Assert.ThrowsAsync<AggregateException>(async () =>
-                    //{
-                    //    await this.server.Run(this.cancellationTokenSource.Token);
-                    //});
-                    //
-                    //Assert.IsTrue(exception.InnerException is InvalidOperationException);
-                });
-
-                Thread.Sleep(100);
-
-                this.cancellationTokenSource.Cancel();
-
-                var delayTask = Task.Delay(100000000);
-
-                var completedTask = Task.WhenAny(testTask, delayTask).Result;
-
-                Assert.AreEqual(testTask, completedTask);
-
-                this.cancellationTokenSource = new CancellationTokenSource();
             }
+
+            for (int i = 0; i < requests.Count; i++)
+            {
+                Assert.AreEqual("Wrong request", this.reader.ReadLine());
+            }
+
+            this.cancellationTokenSource.Cancel();
+            this.client.Close();
+
+            await task;
         }
     }
 }

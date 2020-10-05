@@ -50,7 +50,7 @@
                 result = await this.reader.ReadAsync(symbol);
             }
 
-            string resultString = string.Empty;
+            var resultString = string.Empty;
 
             while (result == 1)
             {

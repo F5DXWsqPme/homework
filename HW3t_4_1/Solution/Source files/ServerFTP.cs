@@ -42,6 +42,10 @@
                 {
                     tasks.Enqueue(this.ProcessRequestAsync());
                 }
+                else
+                {
+                    Thread.Sleep(10);
+                }
             }
 
             while (tasks.Count > 0)
@@ -57,28 +61,36 @@
             var socket = await this.listener.AcceptSocketAsync();
             var stream = new NetworkStream(socket);
             var reader = new StreamReader(stream);
-            var request = await reader.ReadLineAsync();
 
-            var firstSpace = request.IndexOf(' ');
-
-            if (firstSpace < 1)
+            while (!reader.EndOfStream)
             {
-                throw new InvalidOperationException("Wrong message");
+                var request = await reader.ReadLineAsync();
+
+                var firstSpace = request.IndexOf(' ');
+
+                var result = string.Empty;
+
+                if (firstSpace < 1)
+                {
+                    result = "Wrong request";
+                }
+                else
+                {
+                    var requestIdString = request.Substring(0, firstSpace);
+                    var pathString = request.Substring(firstSpace + 1);
+
+                    result = requestIdString switch
+                    {
+                        "1" => await this.ProcessListRequestAsync(pathString),
+                        "2" => await this.ProcessGetRequestAsync(pathString),
+                        _ => "Wrong request",
+                    };
+                }
+
+                var writer = new StreamWriter(stream) { AutoFlush = true };
+
+                await writer.WriteLineAsync(result);
             }
-
-            var requestIdString = request.Substring(0, firstSpace);
-            var pathString = request.Substring(firstSpace + 1);
-
-            var result = requestIdString switch
-            {
-                "1" => await this.ProcessListRequestAsync(pathString),
-                "2" => await this.ProcessGetRequestAsync(pathString),
-                _ => throw new InvalidOperationException("Wrong message")
-            };
-
-            var writer = new StreamWriter(stream) { AutoFlush = true };
-
-            await writer.WriteLineAsync(result);
 
             socket.Close();
         }
@@ -92,7 +104,7 @@
                     return "-1";
                 }
 
-                string result = string.Empty;
+                var result = string.Empty;
 
                 var files = Directory.EnumerateFiles(dirPath);
                 foreach (var file in files)
