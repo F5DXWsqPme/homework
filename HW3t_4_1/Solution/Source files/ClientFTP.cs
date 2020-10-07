@@ -133,6 +133,8 @@
         /// </summary>
         public void Close()
         {
+            this.reader.Close();
+            this.writer.Close();
             this.clientSocket.Close();
         }
 

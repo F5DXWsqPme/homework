@@ -58,41 +58,40 @@
 
         private async Task ProcessRequestAsync()
         {
-            var socket = await this.listener.AcceptSocketAsync();
-            var stream = new NetworkStream(socket);
-            var reader = new StreamReader(stream);
+            using var client = await this.listener.AcceptTcpClientAsync();
+            using var reader = new StreamReader(client.GetStream());
+            using var writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
 
             while (!reader.EndOfStream)
             {
                 var request = await reader.ReadLineAsync();
-
-                var firstSpace = request.IndexOf(' ');
-
-                var result = string.Empty;
+                int firstSpace = request.IndexOf(' ');
 
                 if (firstSpace < 1)
                 {
-                    result = "Wrong request";
+                    await writer.WriteLineAsync("Wrong request");
                 }
                 else
                 {
                     var requestIdString = request.Substring(0, firstSpace);
                     var pathString = request.Substring(firstSpace + 1);
 
-                    result = requestIdString switch
+                    if (requestIdString == "1")
                     {
-                        "1" => await this.ProcessListRequestAsync(pathString),
-                        "2" => await this.ProcessGetRequestAsync(pathString),
-                        _ => "Wrong request",
-                    };
+                        var result = await this.ProcessListRequestAsync(pathString);
+
+                        await writer.WriteLineAsync(result);
+                    }
+                    else if (requestIdString == "2")
+                    {
+                        await this.ProcessGetRequestAsync(pathString, client.GetStream(), writer);
+                    }
+                    else
+                    {
+                        await writer.WriteLineAsync("Wrong request");
+                    }
                 }
-
-                var writer = new StreamWriter(stream) { AutoFlush = true };
-
-                await writer.WriteLineAsync(result);
             }
-
-            socket.Close();
         }
 
         private async Task<string> ProcessListRequestAsync(string dirPath)
@@ -105,14 +104,15 @@
                 }
 
                 var result = string.Empty;
-
                 var files = Directory.EnumerateFiles(dirPath);
+
                 foreach (var file in files)
                 {
                     result += $" {file} false";
                 }
 
                 var directories = Directory.EnumerateDirectories(dirPath);
+
                 foreach (var dir in directories)
                 {
                     result += $" {dir} true";
@@ -129,16 +129,24 @@
             });
         }
 
-        private async Task<string> ProcessGetRequestAsync(string filePath)
+        private async Task ProcessGetRequestAsync(string filePath, NetworkStream stream, StreamWriter writer)
         {
             if (!File.Exists(filePath))
             {
-                return "-1";
+                await writer.WriteLineAsync("-1");
+                return;
             }
 
-            var result = await File.ReadAllTextAsync(filePath);
+            var information = new FileInfo(filePath);
 
-            return $"{result.Length} {result}";
+            await writer.WriteAsync($"{information.Length} ");
+
+            using (var file = File.OpenRead(filePath))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            await writer.WriteLineAsync(string.Empty);
         }
     }
 }
