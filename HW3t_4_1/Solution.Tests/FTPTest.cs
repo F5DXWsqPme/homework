@@ -99,10 +99,10 @@
 
             list.Sort();
 
-            Func<(string, bool), (string, bool)> funtion = element =>
+            Func<(string, bool), (string, bool)> function = element =>
                 (element.Item1.Replace('\\', '/'), element.Item2);
 
-            list = list.Select(funtion).ToList();
+            list = list.Select(function).ToList();
 
             dirPath = dirPath.Replace('\\', '/');
             filePath = filePath.Replace('\\', '/');
@@ -118,7 +118,7 @@
             this.testDir += "/GetShouldGetMinusOne";
             var testFile = this.testDir + "/FileNotExists";
 
-            var (_, flag) = await this.client.GetRequestAsync(testFile);
+            var flag = await this.client.GetRequestAsync(testFile, string.Empty);
 
             Assert.AreEqual(false, flag);
         }
@@ -126,7 +126,7 @@
         [Test]
         public async Task GetShouldGetMinusOneEmpty()
         {
-            var (_, flag) = await this.client.GetRequestAsync(string.Empty);
+            var flag = await this.client.GetRequestAsync(string.Empty, string.Empty);
 
             Assert.AreEqual(false, flag);
         }
@@ -140,10 +140,16 @@
             Directory.CreateDirectory(this.testDir);
             File.Create(testFile).Close();
 
-            var (file, flag) = await this.client.GetRequestAsync(testFile);
+            var destinationFilePath = this.testDir + "/DestFile";
+
+            var flag = await this.client.GetRequestAsync(testFile, destinationFilePath);
 
             Assert.AreEqual(true, flag);
-            Assert.AreEqual(string.Empty, file);
+
+            var destinationFile = File.OpenText(destinationFilePath);
+            var result = destinationFile.ReadToEnd();
+
+            Assert.AreEqual(string.Empty, result);
         }
 
         [Test]
@@ -159,10 +165,16 @@
                 fileStream.Write("test");
             }
 
-            var (file, flag) = await this.client.GetRequestAsync(testFile);
+            var destinationFilePath = this.testDir + "/DestFile";
+
+            var flag = await this.client.GetRequestAsync(testFile, destinationFilePath);
 
             Assert.AreEqual(true, flag);
-            Assert.AreEqual("test", file);
+
+            var destinationFile = File.OpenText(destinationFilePath);
+            var result = destinationFile.ReadToEnd();
+
+            Assert.AreEqual("test", result);
         }
     }
 }

@@ -34,25 +34,27 @@
         /// <returns>Task for waiting.</returns>
         public async Task Run(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var tasks = new Queue<Task>();
-
-            while (!cancellationToken.IsCancellationRequested)
+            using (cancellationToken.Register(() => this.listener.Stop()))
             {
-                if (this.listener.Pending())
+                try
                 {
-                    tasks.Enqueue(this.ProcessRequestAsync());
+                    var tasks = new Queue<Task>();
+
+                    while (!cancellationToken.IsCancellationRequested)
+                    {
+                        tasks.Enqueue(this.ProcessRequestAsync());
+                    }
+
+                    while (tasks.Count > 0)
+                    {
+                        var task = tasks.Dequeue();
+
+                        await task;
+                    }
                 }
-                else
+                catch (InvalidOperationException)
                 {
-                    Thread.Sleep(10);
                 }
-            }
-
-            while (tasks.Count > 0)
-            {
-                var task = tasks.Dequeue();
-
-                await task;
             }
         }
 
@@ -145,6 +147,8 @@
             {
                 await file.CopyToAsync(stream);
             }
+
+            await stream.FlushAsync();
 
             await writer.WriteLineAsync(string.Empty);
         }

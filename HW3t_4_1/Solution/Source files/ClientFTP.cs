@@ -13,9 +13,9 @@
     public class ClientFTP : IDisposable
     {
         private TcpClient clientSocket;
-        private StreamLoader loader;
         private StreamReader reader;
         private StreamWriter writer;
+        private NetworkStream stream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientFTP"/> class.
@@ -26,19 +26,18 @@
         {
             this.clientSocket = new TcpClient(address, port);
 
-            var stream = this.clientSocket.GetStream();
+            this.stream = this.clientSocket.GetStream();
 
-            this.writer = new StreamWriter(stream) { AutoFlush = true };
+            this.writer = new StreamWriter(this.stream) { AutoFlush = true };
 
-            this.reader = new StreamReader(stream);
-            this.loader = new StreamLoader(this.reader);
+            this.reader = new StreamReader(this.stream);
         }
 
         /// <summary>
         /// List request to server.
         /// </summary>
         /// <param name="dirPath">Path to directory.</param>
-        /// <returns>Dyrectory listing and exists flag.</returns>
+        /// <returns>Directory listing and exists flag.</returns>
         /// <exception cref="InvalidOperationException">Throws when client receive wrong response.</exception>
         public async Task<(List<(string, bool)>, bool)> ListRequestAsync(string dirPath)
         {
@@ -96,31 +95,63 @@
         /// Get request to server.
         /// </summary>
         /// <param name="filePath">Path to file.</param>
-        /// <returns>File and exists flag.</returns>
-        public async Task<(string, bool)> GetRequestAsync(string filePath)
+        /// <param name="destinationPath">Path to destination file.</param>
+        /// <returns>Exists flag.</returns>
+        public async Task<bool> GetRequestAsync(string filePath, string destinationPath)
         {
             await this.writer.WriteLineAsync($"2 {filePath}");
 
-            var sizeString = await this.loader.LoadUntilDelimeterAsync(' ', '\n');
+            var sizeStringElements = this.LoadChars().TakeWhile(x => x != ' ' && x != '\n');
+            var sizeArray = await sizeStringElements.ToArrayAsync();
+            var sizeString = new string(sizeArray);
 
             if (long.TryParse(sizeString, out long size))
             {
                 if (size == -1)
                 {
-                    return (null, false);
+                    return false;
                 }
 
-                var fileData = new char[size];
-                int result = this.reader.Read(fileData);
+                using (var destinationFile = File.Create(destinationPath))
+                {
+                    if (size > 0)
+                    {
+                        const int bufferSize = 81920;
+                        byte[] buffer = new byte[bufferSize];
+                        long readed = 0;
 
-                if (result == size)
-                {
-                    return (new string(fileData), true);
+                        long needLoad = size - readed;
+
+                        while (needLoad > 0)
+                        {
+                            if (needLoad < bufferSize)
+                            {
+                                readed += await this.stream.ReadAsync(buffer, 0, (int)needLoad);
+
+                                if (readed != size)
+                                {
+                                    throw new InvalidOperationException("Wrong message");
+                                }
+
+                                await destinationFile.WriteAsync(buffer, 0, (int)needLoad);
+                            }
+                            else
+                            {
+                                readed += await this.stream.ReadAsync(buffer);
+                                await destinationFile.WriteAsync(buffer);
+                            }
+
+                            needLoad = size - readed;
+                        }
+
+                        if (readed != size)
+                        {
+                            throw new InvalidOperationException("Wrong message");
+                        }
+                    }
                 }
-                else
-                {
-                    throw new InvalidOperationException("Wrong message");
-                }
+
+                return true;
             }
             else
             {
@@ -144,6 +175,26 @@
         public void Dispose()
         {
             this.Close();
+        }
+
+        private async IAsyncEnumerable<char> LoadChars()
+        {
+            char[] symbol = new char[1];
+            int result;
+
+            while (true)
+            {
+                result = await this.reader.ReadAsync(symbol);
+
+                if (result == 1)
+                {
+                    yield return symbol[0];
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 }
