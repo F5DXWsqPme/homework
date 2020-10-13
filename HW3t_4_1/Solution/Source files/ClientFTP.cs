@@ -114,10 +114,12 @@
 
                 using (var destinationFile = File.Create(destinationPath))
                 {
+                    using var destinationWriter = new StreamWriter(destinationFile);
+
                     if (size > 0)
                     {
                         const int bufferSize = 81920;
-                        byte[] buffer = new byte[bufferSize];
+                        char[] buffer = new char[bufferSize];
                         long readed = 0;
 
                         long needLoad = size - readed;
@@ -126,19 +128,19 @@
                         {
                             if (needLoad < bufferSize)
                             {
-                                readed += await this.stream.ReadAsync(buffer, 0, (int)needLoad);
+                                readed += await this.reader.ReadAsync(buffer, 0, (int)needLoad);
 
                                 if (readed != size)
                                 {
                                     throw new InvalidOperationException("Wrong message");
                                 }
 
-                                await destinationFile.WriteAsync(buffer, 0, (int)needLoad);
+                                await destinationWriter.WriteAsync(buffer, 0, (int)needLoad);
                             }
                             else
                             {
-                                readed += await this.stream.ReadAsync(buffer);
-                                await destinationFile.WriteAsync(buffer);
+                                readed += await this.reader.ReadAsync(buffer);
+                                await destinationWriter.WriteAsync(buffer);
                             }
 
                             needLoad = size - readed;

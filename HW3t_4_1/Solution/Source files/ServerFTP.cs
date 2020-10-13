@@ -42,7 +42,15 @@
 
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        tasks.Enqueue(this.ProcessRequestAsync());
+                        // This cycle is needed for handling requests in parallel mode.
+                        if (this.listener.Pending())
+                        {
+                            tasks.Enqueue(this.ProcessRequestAsync());
+                        }
+                        else
+                        {
+                            Thread.Sleep(10);
+                        }
                     }
 
                     while (tasks.Count > 0)
@@ -145,7 +153,7 @@
 
             using (var file = File.OpenRead(filePath))
             {
-                await file.CopyToAsync(stream);
+                await file.CopyToAsync(writer.BaseStream);
             }
 
             await stream.FlushAsync();

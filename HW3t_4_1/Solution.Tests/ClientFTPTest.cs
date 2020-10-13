@@ -2,11 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
     using System.IO;
     using System.Net;
     using System.Net.Sockets;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using NUnit.Framework;
@@ -34,6 +32,12 @@
             this.testDir = Directory.GetCurrentDirectory() + "/TestDir/ClientFTPTest";
 
             Directory.CreateDirectory(this.testDir);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            this.server.Close();
         }
 
         [Test]
@@ -81,46 +85,33 @@
         [Test]
         public async Task ListShouldReceiveNotExists()
         {
-            var task = Task.Run(async () =>
-            {
-                await this.server.AcceptClientAsync();
+            await this.server.AcceptClientAsync();
 
-                await this.server.WriteLineAsync("-1");
-            });
+            await this.server.WriteLineAsync("-1");
 
             var (_, flag) = await this.client.ListRequestAsync("dir");
 
             Assert.AreEqual(false, flag);
-
-            await task;
         }
 
         [Test]
         public async Task GetShouldReceiveNotExists()
         {
-            var task = Task.Run(async () =>
-            {
-                await this.server.AcceptClientAsync();
+            await this.server.AcceptClientAsync();
 
-                await this.server.WriteLineAsync("-1");
-            });
+            await this.server.WriteLineAsync("-1");
 
             var flag = await this.client.GetRequestAsync("file", string.Empty);
 
             Assert.AreEqual(false, flag);
-
-            await task;
         }
 
         [Test]
         public async Task ListShouldReceive()
         {
-            var task = Task.Run(async () =>
-            {
-                await this.server.AcceptClientAsync();
+            await this.server.AcceptClientAsync();
 
-                await this.server.WriteLineAsync("2 dir true file false");
-            });
+            await this.server.WriteLineAsync("2 dir true file false");
 
             var (list, flag) = await this.client.ListRequestAsync("dir");
 
@@ -129,8 +120,6 @@
             var expected = new List<(string, bool)>() { ("dir", true), ("file", false) };
 
             Assert.AreEqual(expected, list);
-
-            await task;
         }
 
         [Test]
@@ -140,30 +129,12 @@
 
             Directory.CreateDirectory(this.testDir);
 
-            var filePath = this.testDir + "/file";
+            await this.server.AcceptClientAsync();
 
-            using (var file = File.CreateText(filePath))
-            {
-                await file.WriteAsync("test");
-            }
-
-            var task = Task.Run(async () =>
-            {
-                await this.server.AcceptClientAsync();
-
-                var information = new FileInfo(filePath);
-
-                await this.server.WriteAsync($"{information.Length} ");
-
-                using (var file = File.OpenRead(filePath))
-                {
-                    await this.server.CopyFileAsync(file);
-                }
-            });
+            await this.server.WriteLineAsync($"4 test");
 
             var destinationFilePath = this.testDir + "/DestFile";
 
-            /*
             var flag = await this.client.GetRequestAsync("file", destinationFilePath);
 
             Assert.AreEqual(true, flag);
@@ -171,10 +142,7 @@
             var destinationFile = File.OpenText(destinationFilePath);
             var result = destinationFile.ReadToEnd();
 
-            Assert.AreEqual("file", result);
-            */
-
-            await task;
+            Assert.AreEqual("test", result);
         }
 
         [Test]
@@ -233,7 +201,6 @@
             private TcpListener listener;
             private StreamReader reader;
             private StreamWriter writer;
-            private NetworkStream stream;
             private TcpClient client;
 
             public TestServer(IPAddress address, int port)
@@ -245,9 +212,8 @@
             public async Task AcceptClientAsync()
             {
                 this.client = await this.listener.AcceptTcpClientAsync();
-                this.stream = this.client.GetStream();
-                this.reader = new StreamReader(this.stream);
-                this.writer = new StreamWriter(this.stream) { AutoFlush = true };
+                this.reader = new StreamReader(this.client.GetStream());
+                this.writer = new StreamWriter(this.client.GetStream()) { AutoFlush = true };
             }
 
             public async Task<string> ReadLineAsync() =>
@@ -256,14 +222,11 @@
             public async Task WriteLineAsync(string data) =>
                 await this.writer.WriteLineAsync(data);
 
-            public async Task WriteAsync(string data) =>
-                await this.writer.WriteAsync(data);
-
-            public async Task CopyFileAsync(FileStream file)
+            public void Close()
             {
-                await file.CopyToAsync(this.stream);
-                await this.stream.FlushAsync();
-                await this.writer.WriteLineAsync(string.Empty);
+                this.reader.Close();
+                this.writer.Close();
+                this.client.Close();
             }
         }
     }
