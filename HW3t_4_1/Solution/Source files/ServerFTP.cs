@@ -42,15 +42,8 @@
 
                     while (!cancellationToken.IsCancellationRequested)
                     {
-                        // This cycle is needed for handling requests in parallel mode.
-                        if (this.listener.Pending())
-                        {
-                            tasks.Enqueue(this.ProcessRequestAsync());
-                        }
-                        else
-                        {
-                            Thread.Sleep(10);
-                        }
+                        var client = await this.listener.AcceptTcpClientAsync();
+                        tasks.Enqueue(this.ProcessRequestAsync(client));
                     }
 
                     while (tasks.Count > 0)
@@ -66,9 +59,8 @@
             }
         }
 
-        private async Task ProcessRequestAsync()
+        private async Task ProcessRequestAsync(TcpClient client)
         {
-            using var client = await this.listener.AcceptTcpClientAsync();
             using var reader = new StreamReader(client.GetStream());
             using var writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
 
@@ -102,6 +94,8 @@
                     }
                 }
             }
+
+            client.Close();
         }
 
         private async Task<string> ProcessListRequestAsync(string dirPath)
