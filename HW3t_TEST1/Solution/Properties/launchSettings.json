@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Solution": {
+      "commandName": "Project",
+      "commandLineArgs": "localhost 12345"
+    }
+  }
+}
