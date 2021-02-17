@@ -3,7 +3,7 @@
     | [] -> result
     | head::tail -> revertInner tail (head :: result)
 
-let rec revert list =
+let revert list =
     revertInner list []
 
 [<EntryPoint>]
